@@ -1,0 +1,34 @@
+body {
+  max-width: 650px;
+  margin: 40px auto;
+  padding: 0 10px;
+  font: 18px/1.5 -apple-system, BlinkMacSystemFont, "avenir next", avenir, "Segoe UI", "lucida grande", "helvetica neue", helvetica, "Fira Sans", roboto, noto, "Droid Sans", cantarell, oxygen, ubuntu, "franklin gothic medium", "century gothic", "Liberation Sans", sans-serif;
+  color: #444
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.2
+}
+
+.submit_button {
+  display: block;
+  width: 150px;
+  height: 35px;
+  border-radius: 18px;
+  background-color: #1c89ff;
+  border: solid 1px transparent;
+  color: #fff;
+  font-size: 1em;
+  font-weight: 300;
+  cursor: pointer;
+  margin: 20px 0;
+  transition: all .1s ease-in-out;
+
+  &:hover {
+    background-color: transparent;
+    border-color: #fff;
+    transition: all .1s ease-in-out;
+  }
+}

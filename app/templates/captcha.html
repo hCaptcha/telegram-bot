@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <script src="https://www.hcaptcha.com/1/api.js" async defer></script>
+{% endblock %}
+
+{% block content %}
+  <p>Hi <strong>{{ user_name }}</strong>!</p>
+  <p>Please solve the following captcha.</p>
+  <form action="{{ url_for('captcha.verify', chat_id=chat_id, user_id=user_id, user_name=user_name, callback_chat_id=callback_chat_id) }}" method="POST">
+    <div class="h-captcha" data-sitekey={{ site_key }}></div>
+    <input type="submit" value="Submit" class="submit_button" />
+  </form>
+{% endblock %}

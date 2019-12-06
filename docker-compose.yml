@@ -1,0 +1,36 @@
+---
+version: '3.4'
+volumes:
+  postgres:
+
+services:
+  db:
+    image: postgres:9.6
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d thb']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=thb
+    expose:
+      - "5432"
+
+  web:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: /bin/sh -c 'python manage.py db upgrade -d app/migrations/ && cd app/ && flask run -h 0.0.0.0 -p 8000'
+    environment:
+      - DATABASE_URL=postgresql://postgres@db/thb
+    volumes:
+      - .:/app
+    links:
+      - db
+    depends_on:
+      - db
+    ports:
+      - '0.0.0.0:8000:8000'
