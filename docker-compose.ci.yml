@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  telegramb-bot-ci:
+    volumes:
+        - .:/app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: pipenv run python -m pytest
+    environment:
+      - DATABASE_URL=sqlite://
