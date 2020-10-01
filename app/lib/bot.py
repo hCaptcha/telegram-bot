@@ -7,6 +7,7 @@ from threading import Thread
 
 from app.config import get_active_config, should_run_webhook
 from app.lib.handlers_manager import HandlersManager
+from app.lib.cleanup_worker import CleanupWorker
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.DEBUG
@@ -73,6 +74,7 @@ class HCaptchaBot:
         # clean up running threads
         self.update_queue.stop()
         self.dispatcher_thread.join()
+        self.cleanup_worker_thread.join()
         self.dispatcher.stop()
 
     def _run_polling(self):
@@ -87,8 +89,15 @@ class HCaptchaBot:
         self.dispatcher_thread = Thread(target=self.dispatcher.start, name="dispatcher")
         self.dispatcher_thread.start()
 
+    def _run_cleanup_worker(self):
+        worker = CleanupWorker(self.bot, self.app, hours=45) 
+        self.cleanup_worker_thread = Thread(target=worker.run, name="cleanup_worker")
+        self.cleanup_worker_thread.start()
+
     def run(self):
         if should_run_webhook():
             self._run_webhook()
         else:
             self._run_polling()
+        # Run the cleanup worker in a seperate thread.
+        self._run_cleanup_worker()

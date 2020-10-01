@@ -2,9 +2,9 @@ import logging
 from datetime import datetime
 from telegram import Update, ParseMode, ChatPermissions
 from telegram.ext import CallbackContext
-
 from app.extensions import db
-from app.models import Human
+
+from app.models import Human, Message
 
 
 def app_context(func):
@@ -63,18 +63,22 @@ class BaseHandler:
             self.remove_restrictions(bot, callback_chat_id, user_id, user_name)
 
             self.logger.info("Sending notification...")
-            bot.send_message(
+            res = bot.send_message(
                 chat_id,
                 f"**Thanks {user_name}! You are now allowed to chat.**",
                 parse_mode=ParseMode.MARKDOWN,
             )
+            self.add_message_info(res['message_id'], res['chat']['id'])
         else:
             self.logger.info("Private message, sending notification...")
-            bot.send_message(
+            res = bot.send_message(
                 chat_id,
                 f"**Thanks {user_name}! You are now verified.**",
                 parse_mode=ParseMode.MARKDOWN,
             )
+            self.add_message_info(res['message_id'], res['chat']['id'])
+
+
 
     def remove_restrictions(self, bot, chat_id, user_id, user_name):
         """
@@ -100,3 +104,17 @@ class BaseHandler:
             f"chat_id: {chat_id} | chat_type: {chat_type} | bot_status: {bot_status}"
         )
         return chat_type == "supergroup" and bot_status == "administrator"
+    
+    def add_message_info(self, message_id, chat_id):
+        """ Add a message(chat_id, message_id) to the db, so we can delete the message later """
+        db.session.add(
+            Message(
+                chat_id=chat_id,
+                message_id=message_id,
+            )
+        )
+        db.session.commit()
+        self.logger.info(
+            f"Recording the message that just sent ..."
+        )
+

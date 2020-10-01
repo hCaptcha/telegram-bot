@@ -1,7 +1,7 @@
 import unittest
 
 from app.extensions import db
-from app.models import Human, Channel
+from app.models import Human, Channel, Message
 from app import create_app
 
 
@@ -27,7 +27,9 @@ class BaseCase(unittest.TestCase):
     def create_fixtures(self):
         human = Human(user_id="1", user_name="joe")
         channel = Channel(chat_id="1", name="test", restrict=False)
+        message = Message(chat_id="1", message_id="1")
 
         db.session.add(human)
         db.session.add(channel)
+        db.session.add(message)
         db.session.commit()

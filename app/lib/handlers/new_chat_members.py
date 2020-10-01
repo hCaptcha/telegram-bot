@@ -55,7 +55,7 @@ class NewChatMembersFilter(BaseHandler):
             self.send_bot_link(context.bot, chat_id, user)
 
     def send_bot_link(self, bot, chat_id, user):
-        bot.send_message(
+        res = bot.send_message(
             chat_id,
             f"Hi {user.name} 👋! Please click the following link to verify yourself before you're allowed to chat.**",
             parse_mode=ParseMode.MARKDOWN,
@@ -72,6 +72,7 @@ class NewChatMembersFilter(BaseHandler):
                 }
             ),
         )
+        self.add_message_info(res['message_id'], res['chat']['id'])
 
     def get_bot_link(self, chat_id):
         link = f"https://t.me/{get_active_config().TELEGRAM_USERNAME}?start={chat_id}"
