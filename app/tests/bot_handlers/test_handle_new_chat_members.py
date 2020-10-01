@@ -12,7 +12,8 @@ class TestHandler(TestBotHandlersBase):
     def test(self):
         command = NewChatMembersFilter()
         self.bot.restrict_chat_member = MagicMock(return_value=None)
-        command.send_bot_link = MagicMock(return_value=None)
+        command.send_bot_link = MagicMock(return_value={"message_id":"123","chat":{"id":"123"}})
+        command.add_message_info = MagicMock(return_value=None)
         # when bot first join
         self.bot.get_updates = MagicMock(
             return_value=[self.fake_update(new_chat_members=[self.bot])]
@@ -72,6 +73,7 @@ class TestHandler(TestBotHandlersBase):
 
         self.bot.restrict_chat_member.assert_called()
         command.send_bot_link.assert_called()
+        command.add_message_info.assert_called_with("123", "123")
         self.assertEqual(self.bot.restrict_chat_member.call_count, 1)
         self.bot.restrict_chat_member.assert_has_calls(
             [

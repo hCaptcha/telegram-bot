@@ -14,7 +14,8 @@ class TestHandler(TestBotHandlersBase):
         human = Human.query.filter_by(user_id="1").one_or_none()
         user = User(id=1, first_name="Joe", last_name="Doe", is_bot=False)
         self.bot.get_updates = MagicMock(return_value=[self.fake_update()])
-        self.bot.send_message = MagicMock(return_value=None)
+        self.bot.send_message = MagicMock(return_value={"message_id":"1234","chat":{"id":"1234"}})
+        command.add_message_info = MagicMock(return_value=None)
         self.bot.restrict_chat_member = MagicMock(return_value=None)
         update_event = self.bot.get_updates().pop()
 
@@ -34,8 +35,10 @@ class TestHandler(TestBotHandlersBase):
             self.bot.send_message.call_args[1],
             {"chat_id": 1, "text": "You're already verified as human."},
         )
+        command.add_message_info.assert_called_with("1234", "1234")
 
         self.bot.send_message.reset_mock()
+        command.add_message_info.reset_mock()
         self.bot.restrict_chat_member.reset_mock()
 
         # when callback_chat_id is not set, user is not verified
@@ -58,8 +61,11 @@ class TestHandler(TestBotHandlersBase):
                 ),
             ]
         )
+        command.add_message_info.assert_called_with("1234", "1234")
+        self.assertEqual(command.add_message_info.call_count, 2)
 
         self.bot.send_message.reset_mock()
+        command.add_message_info.reset_mock()
         self.bot.restrict_chat_member.reset_mock()
 
         # when callback_chat_id is set, user is verified
@@ -79,6 +85,7 @@ class TestHandler(TestBotHandlersBase):
                 )
             ]
         )
+        command.add_message_info.assert_called_with("1234", "1234")
 
         self.bot.restrict_chat_member.assert_called()
         self.assertEqual(self.bot.restrict_chat_member.call_count, 1)
@@ -97,6 +104,7 @@ class TestHandler(TestBotHandlersBase):
         )
 
         self.bot.send_message.reset_mock()
+        command.add_message_info.reset_mock()
         self.bot.restrict_chat_member.reset_mock()
 
         # when callback_chat_id is set, user is not verified
@@ -120,6 +128,8 @@ class TestHandler(TestBotHandlersBase):
                 ),
             ]
         )
+        command.add_message_info.assert_called_with("1234", "1234")
+        self.assertEqual(command.add_message_info.call_count, 2)
 
 
 if __name__ == "__main__":
