@@ -4,6 +4,7 @@ from telegram import Update, ParseMode, ChatPermissions
 from telegram.ext import CallbackContext
 from app.extensions import db
 
+from app.lib.utils import cleanup_all_user_messages 
 from app.models import Human, Message
 
 
@@ -42,7 +43,7 @@ class BaseHandler:
 
         if self.is_verified(user_id):
             return
-
+        
         db.session.add(
             Human(
                 user_id=user_id,
@@ -52,6 +53,8 @@ class BaseHandler:
             )
         )
         db.session.commit()
+
+        cleanup_all_user_messages(bot, chat_id, user_id)
 
         self.logger.info(
             f"Recording that user is human, chat_id: {chat_id}, user_id: {user_id}, user_name: {user_name}, callback_chat_id: {callback_chat_id} ..."
@@ -71,12 +74,11 @@ class BaseHandler:
             self.add_message_info(res['message_id'], res['chat']['id'])
         else:
             self.logger.info("Private message, sending notification...")
-            res = bot.send_message(
+            bot.send_message(
                 chat_id,
                 f"**Thanks {user_name}! You are now verified.**",
                 parse_mode=ParseMode.MARKDOWN,
             )
-            self.add_message_info(res['message_id'], res['chat']['id'])
 
 
 
@@ -105,12 +107,13 @@ class BaseHandler:
         )
         return chat_type == "supergroup" and bot_status == "administrator"
     
-    def add_message_info(self, message_id, chat_id):
+    def add_message_info(self, message_id, chat_id, user_id):
         """ Add a message(chat_id, message_id) to the db, so we can delete the message later """
         db.session.add(
             Message(
                 chat_id=chat_id,
                 message_id=message_id,
+                user_id=str(user_id),
             )
         )
         db.session.commit()

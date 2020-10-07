@@ -13,9 +13,8 @@ class UnknownCommand(BaseHandler):
             update.message.text[get_active_config().MESSAGE_CHARS_LIMIT :] and "..."
         )
 
-        res = context.bot.send_message(
+        context.bot.send_message(
             chat_id=update.message.chat_id,
             text=f"Sorry, didn't recognize this command:\n{command}",
         )
-        self.add_message_info(res['message_id'], res['chat']['id'])
         HelpCommand(self.app).handler(update, context)

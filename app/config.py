@@ -22,6 +22,7 @@ class Config(object):
     TELEGRAM_USERNAME = os.getenv("TELEGRAM_USERNAME", None)
     TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", None)
     APP_URL = os.getenv("APP_URL", None)
+    CLEANUP_PERIOD_MINUTES = os.getenv("CLEANUP_PERIOD_MINUTES", "3")
 
     if not TELEGRAM_USERNAME:
         raise ValueError("TELEGRAM_USERNAME is not set")

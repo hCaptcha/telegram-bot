@@ -53,7 +53,7 @@ class NewChatMembersFilter(BaseHandler):
 
             self.logger.info("Sending bot link...")
             res = self.send_bot_link(context.bot, chat_id, user)
-            self.add_message_info(res['message_id'], res['chat']['id'])
+            self.add_message_info(res['message_id'], res['chat']['id'], user.id)
 
     def send_bot_link(self, bot, chat_id, user):
         return bot.send_message(

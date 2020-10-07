@@ -27,7 +27,7 @@ class BaseCase(unittest.TestCase):
     def create_fixtures(self):
         human = Human(user_id="1", user_name="joe")
         channel = Channel(chat_id="1", name="test", restrict=False)
-        message = Message(chat_id="1", message_id="1")
+        message = Message(user_id="1", chat_id="1", message_id="1")
 
         db.session.add(human)
         db.session.add(channel)

@@ -7,6 +7,8 @@ from app.extensions import db
 
 from app.models import Message
 from app.lib.handlers.base import app_context
+from app.config import get_active_config
+from app.lib.utils import cleanup_message
 
 
 logging.basicConfig(
@@ -15,13 +17,13 @@ logging.basicConfig(
 
 logger = logging.getLogger("cleanup_worker")
 
-
 class CleanupWorker:
-    def __init__(self, bot, app=None, hours=45):
+    def __init__(self, bot, app=None, minutes=None):
         self.bot = bot
-        self.hours = hours
         self.app = app
-        schedule.every(self.hours).hours.do(self._cleanup)
+
+        self.minutes = minutes or int(get_active_config().CLEANUP_PERIOD_MINUTES)
+        schedule.every(self.minutes).minutes.do(self._cleanup)
 
     def run(self):
         while True:
@@ -30,8 +32,9 @@ class CleanupWorker:
 
     @app_context
     def _cleanup(self):
+        # If no folowup of captcha completion, then we can just cleanup all of messages that are older than self.minutes ago.
         messages = db.session.query(Message).filter(
-                   Message.created_date<=(datetime.utcnow()-timedelta(hours=self.hours))
+                   Message.created_date<=(datetime.now()-timedelta(minutes=0))
         ).all()
         logger.info(
                 f"Start to cleaning up {len(messages)} message..."
@@ -39,24 +42,7 @@ class CleanupWorker:
         
         deleted = 0
         for m in messages:
-            must_delete = False
-            try:
-                must_delete = self.bot.delete_message(chat_id=m.chat_id, message_id=m.message_id)
-            # Skip if the message not found for any reason
-            except BadRequest as e:
-                logger.debug(
-                        f"While deleting a bot message: {e}"
-                )
-                must_delete = True
-            except Exception as e:
-                logger.debug(
-                        f"While deleting a bot message, chat_id={m.chat_id} , message_id={m.message_id}: {e}"
-                )
-                continue
-            if must_delete:
-                db.session.delete(m)
-                db.session.commit()
-                deleted += 1
+            deleted += cleanup_message(self.bot, m.id, m.chat_id, m.message_id)
 
         logger.info(
                 f"Cleaning up {deleted} message done."

@@ -40,7 +40,8 @@ class TestHandler(TestBotHandlersBase):
 
         self.bot.restrict_chat_member.assert_called()
         self.bot.send_message.assert_called()
-        command.add_message_info.assert_called_with("1234", "1234")
+        command.add_message_info.assert_called_with("1234", "1234", 1)
+
         
         # mock remove_restrictions
         command.remove_restrictions(
@@ -52,7 +53,7 @@ class TestHandler(TestBotHandlersBase):
 
         self.bot.restrict_chat_member.assert_called()
         self.bot.send_message.assert_called()
-        command.add_message_info.assert_called_with("1234", "1234")
+        command.add_message_info.assert_called_with("1234", "1234", 1)
 
 
 if __name__ == "__main__":

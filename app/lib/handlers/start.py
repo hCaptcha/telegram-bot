@@ -28,7 +28,7 @@ class StartCommand(BaseHandler):
                     chat_id=update.message.chat_id,
                     text="You're already verified as human, you'll be able to chat in the group",
                 )
-                self.add_message_info(res['message_id'], res['chat']['id'])
+                # self.add_message_info(res['message_id'], res['chat']['id'], update.message.from_user.id)
                 self.remove_restrictions(
                     context.bot,
                     callback_chat_id,
@@ -40,13 +40,13 @@ class StartCommand(BaseHandler):
                     chat_id=update.message.chat_id,
                     text="You're already verified as human.",
                 )
-                self.add_message_info(res['message_id'], res['chat']['id'])
+                # self.add_message_info(res['message_id'], res['chat']['id'], update.message.from_user.id)
         else:
             res = context.bot.send_message(
                 chat_id=update.message.chat_id,
                 text="Hi, I'm a bot that helps verify you're human :)",
             )
-            self.add_message_info(res['message_id'], res['chat']['id'])
+            self.add_message_info(res['message_id'], res['chat']['id'], update.message.from_user.id)
             self.send_challenge(
                 context.bot,
                 update.message.chat_id,
@@ -72,5 +72,5 @@ class StartCommand(BaseHandler):
                 }
             ),
         )
-        self.add_message_info(res['message_id'], res['chat']['id'])
+        self.add_message_info(res['message_id'], res['chat']['id'], user.id)
 

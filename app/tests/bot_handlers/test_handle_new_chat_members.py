@@ -73,7 +73,7 @@ class TestHandler(TestBotHandlersBase):
 
         self.bot.restrict_chat_member.assert_called()
         command.send_bot_link.assert_called()
-        command.add_message_info.assert_called_with("123", "123")
+        command.add_message_info.assert_called_with("123", "123", 1)
         self.assertEqual(self.bot.restrict_chat_member.call_count, 1)
         self.bot.restrict_chat_member.assert_has_calls(
             [
