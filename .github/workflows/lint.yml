@@ -19,6 +19,4 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Python Lint (isort/black)
-        # You may pin to the exact commit or the version.
-        # uses: wrboyce/python-lint-action@7c6d719c086f19e7eeb802c3fbdeeff6c01cab61
-        uses: wrboyce/python-lint-action@v1.0.0
+        uses: wrboyce/python-lint-action@7c6d719c086f19e7eeb802c3fbdeeff6c01cab61
