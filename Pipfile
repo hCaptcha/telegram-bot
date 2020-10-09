@@ -7,6 +7,7 @@ verify_ssl = true
 ipdb = "*"
 pytest = "*"
 coverage = "*"
+importlib-metadata = "*"
 
 [packages]
 flask = ">=1.1"
