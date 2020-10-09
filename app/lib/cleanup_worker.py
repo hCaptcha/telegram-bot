@@ -1,49 +1,89 @@
-import schedule
 import logging
 from datetime import datetime, timedelta
-from telegram.error import BadRequest
 from time import sleep
-from app.extensions import db
 
-from app.models import Message
-from app.lib.handlers.base import app_context
+import schedule
+from telegram.error import BadRequest
+
 from app.config import get_active_config
-from app.lib.utils import cleanup_message
-
-
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.DEBUG
-)
+from app.extensions import db
+from app.models import Message
 
 logger = logging.getLogger("cleanup_worker")
 
 class CleanupWorker:
+    """ A Worker to periodically delete unused channel messages """
     def __init__(self, bot, app=None, minutes=None):
         self.bot = bot
         self.app = app
 
-        self.minutes = minutes or int(get_active_config().CLEANUP_PERIOD_MINUTES)
-        schedule.every(self.minutes).minutes.do(self._cleanup)
+        self.minutes = minutes if minutes is not None else\
+                int(get_active_config().CLEANUP_PERIOD_MINUTES)
+        schedule.every(self.minutes).minutes.do(self.cleanup)
 
     def run(self):
+        """ A cronjob like approach to cleanup messages every self.minutes """
         while True:
             schedule.run_pending()
             sleep(1)
 
-    @app_context
-    def _cleanup(self):
-        # If no folowup of captcha completion, then we can just cleanup all of messages that are older than self.minutes ago.
-        messages = db.session.query(Message).filter(
-                   Message.created_date<=(datetime.now()-timedelta(minutes=0))
-        ).all()
-        logger.info(
-                f"Start to cleaning up {len(messages)} message..."
-        )
-        
-        deleted = 0
-        for m in messages:
-            deleted += cleanup_message(self.bot, m.id, m.chat_id, m.message_id)
+    def cleanup(self):
+        """ If no folowup of captcha completion,
+        then we can just cleanup all of messages that are older than self.minutes ago.
+        """
+        with self.app.app_context():
+            messages = db.session.query(Message).filter(
+                       Message.created_date<=(datetime.now()-timedelta(minutes=self.minutes))
+            ).all()
+            logger.info(
+                    f"Start to cleaning up {len(messages)} message..."
+            )
+            deleted = 0
+            for message in messages:
+                deleted += self._cleanup_message(message.id, message.chat_id, message.message_id)
 
-        logger.info(
-                f"Cleaning up {deleted} message done."
-        )
+            logger.info(
+                    f"Cleaning up {deleted} message done."
+            )
+
+    def _cleanup_message(self, _id, chat_id, message_id):
+        """ Cleanup a single message from the Telegram api and the db """
+        with self.app.app_context():
+            must_delete = False
+            try:
+                must_delete = self.bot.delete_message(chat_id=chat_id, message_id=message_id)
+            # Skip if the message not found for any reason
+            except BadRequest as e:
+                logger.debug(
+                        f"While deleting a bot message: {e}"
+                )
+                must_delete = True
+            except Exception as e:
+                logger.debug(
+                        f"While deleting a bot message, \
+                                chat_id={chat_id} , message_id={message_id}: {e}"
+                )
+                return 0
+            if must_delete:
+                db.session.query(Message).filter_by(id=_id).delete()
+                db.session.commit()
+                return 1
+            return 0
+
+    def cleanup_all_user_messages(self, chat_id, user_id):
+        """ Cleanup all of the user messages from the Telegram api and the db """
+        with self.app.app_context():
+            messages = db.session.query(Message).filter(
+                    Message.user_id==user_id,
+                    Message.chat_id==chat_id
+            ).all()
+            logger.info(
+                    f"Start to cleaning up {len(messages)}\
+                            message for user_id({user_id})..."
+            )
+            deleted = 0
+            for message in messages:
+                deleted += self._cleanup_message(message.id, message.chat_id, message.message_id)
+            logger.info(
+                    f"Cleaning up {deleted} message done for user_id({user_id})."
+            )

@@ -12,7 +12,6 @@ class TestHandler(TestBotHandlersBase):
             return_value=[self.fake_update(text="/lorem ipsum")]
         )
         self.bot.send_message = MagicMock(return_value={"message_id":"123","chat":{"id":"123"}})
-        # command.add_message_info = MagicMock(return_value=None)
 
         context = MagicMock()
         context.bot = self.bot
@@ -33,8 +32,6 @@ class TestHandler(TestBotHandlersBase):
                     )
                 ]
             )
-            # command.add_message_info.assert_called_with("123", "123", "1")
-            # self.assertEqual(command.add_message_info.call_count, 1)
 
 
         self.bot.send_message.reset_mock()
@@ -59,8 +56,6 @@ class TestHandler(TestBotHandlersBase):
                 )
             ]
         )
-        # command.add_message_info.assert_called_with("123", "123", "1")
-        # self.assertEqual(command.add_message_info.call_count, 1)
 
 
 if __name__ == "__main__":

@@ -8,7 +8,6 @@ from threading import Thread
 from app.config import get_active_config, should_run_webhook
 from app.lib.handlers_manager import HandlersManager
 from app.lib.cleanup_worker import CleanupWorker
-from app.lib.utils import cleanup_all_user_messages 
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.DEBUG
@@ -39,6 +38,7 @@ class HCaptchaBot:
             self.dispatcher = self.updater.dispatcher
 
         self.handlers_manager = HandlersManager(self.dispatcher, self.app)
+        self.worker = CleanupWorker(self.bot, self.app) 
 
     def verify(self, *args):
         """
@@ -91,8 +91,7 @@ class HCaptchaBot:
         self.dispatcher_thread.start()
 
     def _run_cleanup_worker(self):
-        worker = CleanupWorker(self.bot, self.app) 
-        self.cleanup_worker_thread = Thread(target=worker.run, name="cleanup_worker")
+        self.cleanup_worker_thread = Thread(target=self.worker.run, name="cleanup_worker")
         self.cleanup_worker_thread.start()
 
     def run(self):

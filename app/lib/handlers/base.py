@@ -4,7 +4,7 @@ from telegram import Update, ParseMode, ChatPermissions
 from telegram.ext import CallbackContext
 from app.extensions import db
 
-from app.lib.utils import cleanup_all_user_messages 
+from app.lib.cleanup_worker import CleanupWorker
 from app.models import Human, Message
 
 
@@ -54,7 +54,7 @@ class BaseHandler:
         )
         db.session.commit()
 
-        cleanup_all_user_messages(bot, chat_id, user_id)
+        self.app.bot_instance.worker.cleanup_all_user_messages(chat_id, user_id)
 
         self.logger.info(
             f"Recording that user is human, chat_id: {chat_id}, user_id: {user_id}, user_name: {user_name}, callback_chat_id: {callback_chat_id} ..."
@@ -117,7 +117,7 @@ class BaseHandler:
             )
         )
         db.session.commit()
-        self.logger.info(
+        self.logger.debug(
             f"Recording the message that just sent ..."
         )
 

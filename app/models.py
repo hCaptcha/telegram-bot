@@ -59,4 +59,4 @@ class Message(db.Model):
         self.message_id = message_id
 
     def __repr__(self):
-        return "<id {}>".format(self.id)
+        return "<Message {}>".format(self.id)
