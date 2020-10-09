@@ -23,14 +23,19 @@ jobs:
         python -m pip install --upgrade pipenv
         pipenv install --dev
 
-    - name: Test with pytest
+    # - name: Test with pytest
+    #   env:
+    #     TELEGRAM_USERNAME: hCaptchaTestBot
+    #     TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+    #     HCAPTCHA_SECRET: "fake"
+    #     HCAPTCHA_SITE_KEY: "fake"
+    #   run: |
+    #     pipenv run python3 -m pytest
+    - name: PyTest w/ Coverage
       env:
-        TELEGRAM_USERNAME: fake
-        TELEGRAM_TOKEN: "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw"
+        TELEGRAM_USERNAME: hCaptchaTestBot
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
         HCAPTCHA_SECRET: "fake"
         HCAPTCHA_SITE_KEY: "fake"
       run: |
-        pipenv run python3 -m pytest
-    # - name: Coverage
-    #   run: |
-    #     pipenv run coverage run --include="app/*" -m pytest
+        pipenv run coverage run --include="app/*" -m pytest
