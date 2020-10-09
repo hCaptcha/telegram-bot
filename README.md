@@ -80,3 +80,4 @@ Incase you need to run your the application on heroku:
 
 - Check logs on heroku: `heroku logs --tail --remote <env>`
 - The bot must be in a supergroup and the bot must be have admin permissions.
+
