@@ -22,9 +22,15 @@ jobs:
       run: |
         python -m pip install --upgrade pipenv
         pipenv install --dev
+
     - name: Test with pytest
+      env:
+        TELEGRAM_USERNAME: fake
+        TELEGRAM_TOKEN: "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw"
+        HCAPTCHA_SECRET: "fake"
+        HCAPTCHA_SITE_KEY: "fake"
       run: |
         pipenv run python3 -m pytest
-    - name: Coverage
-      run: |
-        pipenv run coverage run --include="app/*" -m pytest
+    # - name: Coverage
+    #   run: |
+    #     pipenv run coverage run --include="app/*" -m pytest
