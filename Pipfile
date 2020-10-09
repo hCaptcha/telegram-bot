@@ -11,7 +11,7 @@ coverage = "*"
 [packages]
 flask = ">=1.1"
 python-telegram-bot = "*"
-request = "*"
+requests = "*"
 gunicorn = "*"
 python-dotenv = "*"
 flask-sqlalchemy = ">=2.3"
@@ -22,3 +22,6 @@ psycopg2-binary = "*"
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true
