@@ -1,13 +1,12 @@
 import json
-
-from telegram import ChatPermissions, ParseMode, Update
+from telegram import Update, ParseMode, ChatPermissions
 from telegram.ext import CallbackContext
 
-from app.config import get_active_config
 from app.extensions import db
 from app.lib.handlers.base import BaseHandler, app_context
 from app.lib.handlers.chat_created import ChatCreatedFilter
-from app.models import Channel
+from app.config import get_active_config
+from app.models import Channel, Bot, Human, BotChannelMember, HumanChannelMember
 
 
 class NewChatMembersFilter(BaseHandler):
@@ -51,13 +50,20 @@ class NewChatMembersFilter(BaseHandler):
                     can_send_other_messages=False,
                 ),
             )
+           
+            # Add user/bot to the db if not exists
+            if user.is_bot:
+                bot, _ = self.get_or_create(Bot, user_id=user.id, user_name=user.user_name)
+                self.get_or_create(BotChannelMember, bot_id=human.id, channel_id=chat_id)
+            else:
+                human, _ = self.get_or_create(Human, user_id=user.id, user_name=user.user_name, verified=False)
+                self.get_or_create(HumanChannelMember, human_id=human.id, channel_id=chat_id)
+
 
             self.logger.info("Sending bot link...")
-            res = self.send_bot_link(context.bot, chat_id, user)
-            self.add_message_info(res["message_id"], res["chat"]["id"], user.id)
-
+            self.send_bot_link(context.bot, chat_id, user)
     def send_bot_link(self, bot, chat_id, user):
-        return bot.send_message(
+        bot.send_message(
             chat_id,
             f"Hi {user.name} 👋! Please click the following link to verify yourself before you're allowed to chat.**",
             parse_mode=ParseMode.MARKDOWN,

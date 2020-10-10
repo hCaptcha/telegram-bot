@@ -40,7 +40,7 @@ class HandlersManager(BaseHandler):
             CommandHandler("hi", StartCommand(self.app).handler, pass_args=True),
             CommandHandler("help", HelpCommand(self.app).handler),
             CommandHandler("restrict", RestrcitCommand(self.app).handler),
-            # CommandHandler("stats", StatsCommand(self.app).handler),
+            CommandHandler("stats", StatsCommand(self.app).handler),
             MessageHandler(Filters.command, UnknownCommand(self.app).handler),
         ]
 

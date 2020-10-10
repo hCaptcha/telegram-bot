@@ -33,7 +33,27 @@ class BaseHandler:
             Human.query.filter(
                 Human.user_id == str(user_id), Human.verified == True
             ).exists()
-        ).scalar()
+            ).scalar()
+
+    def is_exists(self, user_id):
+        return db.session.query(
+            Human.query.filter(
+                Human.user_id == str(user_id)
+            ).exists()
+            )
+
+    def get_or_create(self, session, model, defaults=None, **kwargs):
+        self.logger.debug(f"Get or create a {type(model)}({kwargs})")
+        instance = session.query(model).filter_by(**kwargs).first()
+        if instance:
+            return instance, False
+        else:
+            params = dict((k, v) for k, v in kwargs.iteritems() if not isinstance(v, db.ClauseElement))
+            params.update(defaults or {})
+            instance = model(**params)
+            session.add(instance)
+            return instance, True
+
 
     def verify(self, bot, chat_id, user_id, user_name, callback_chat_id):
         """
@@ -45,15 +65,28 @@ class BaseHandler:
         if self.is_verified(user_id):
             return
 
-        db.session.add(
-            Human(
-                user_id=user_id,
-                user_name=user_name,
-                verified=True,
-                verification_date=datetime.today(),
+        if is_exists(user_id):
+            db.session.query(       
+                Human.query.filter(                                                                             
+                    Human.user_id == str(user_id)                                                                                                      
+                    ).update(                                                                                                                                         
+                        {                                
+                            "verification_date": datetime.today(),
+                            "verified": True                                                                                                                          
+                        }                                                                                                                                             
+                        ))                                                                                                                                                 
+            db.session.commit() 
+        else:
+            # Should never be called
+            db.session.add(
+                Human(
+                    user_id=user_id,
+                    user_name=user_name,
+                    verified=True,
+                    verification_date=datetime.today(),
+                )
             )
-        )
-        db.session.commit()
+            db.session.commit()
 
         self.app.bot_instance.worker.cleanup_all_user_messages(chat_id, user_id)
 
