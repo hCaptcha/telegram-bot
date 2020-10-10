@@ -40,18 +40,17 @@ class BaseHandler:
             Human.query.filter(
                 Human.user_id == str(user_id)
             ).exists()
-            )
+            ).scalar()
 
-    def get_or_create(self, session, model, defaults=None, **kwargs):
+    def get_or_create(self, model, defaults=None, **kwargs):
         self.logger.debug(f"Get or create a {type(model)}({kwargs})")
-        instance = session.query(model).filter_by(**kwargs).first()
+        instance = db.session.query(model).filter_by(**kwargs).first()
         if instance:
             return instance, False
         else:
-            params = dict((k, v) for k, v in kwargs.iteritems() if not isinstance(v, db.ClauseElement))
-            params.update(defaults or {})
-            instance = model(**params)
-            session.add(instance)
+            instance = model(**kwargs)
+            db.session.add(instance)
+            db.session.commit()
             return instance, True
 
 

@@ -11,22 +11,6 @@ class LeftChatMemberFilter(BaseHandler):
     def handler(self, update: Update, context: CallbackContext):
         message = update.message
 
-        # Only handle case when bot was removed from channel
-        if not message.left_chat_member.id == context.bot.id:
-            if message.left_chat_member.is_bot:
-                db.session.query(BotChannelMember).join(Bot).join(Channel).filter(
-                    Bot.user_id == message.left_chat_member.id,
-                    Channel.chat_id == message.chat_id
-                ).delete()
-                db.session.commit()
-            else:
-                db.session.query(HumanChannelMember).join(Human).join(Channel).filter(
-                    Human.user_id == message.left_chat_member.id,
-                    Channel.chat_id == message.chat_id
-                ).delete()
-                db.session.commit()
-
-        
         channel = Channel.query.filter(
             Channel.chat_id == str(message.chat_id)
         ).one_or_none()
@@ -37,18 +21,44 @@ class LeftChatMemberFilter(BaseHandler):
             )
             return
 
+
+        # Only handle case when bot was removed from channel
+        if not message.left_chat_member.id == context.bot.id:
+            if message.left_chat_member.is_bot:
+                bot = db.session.query(Bot).filter_by(user_id=str(message.left_chat_member.id)).one_or_none()
+                if bot is None:
+                    # Should never be called
+                    return
+                db.session.query(BotChannelMember).filter(
+                    BotChannelMember.bot_id == bot.id,
+                    BotChannelMember.channel_id == channel.id
+                ).delete()
+                db.session.commit()
+            else:
+                human = db.session.query(human).filter_by(user_id=str(message.left_chat_member.id)).one_or_none()
+                if human is None:
+                    # Should never be called
+                    return
+                db.session.query(HumanChannelMember).filter(
+                    HumanChannelMember.human_id == human.id,
+                    HumanChannelMember.channel_id == channel.id
+                ).delete()
+                db.session.commit()
+            return
+
+        
         self.logger.info(f"Leaving chat_id: {message.chat_id}...")
         
         # Delete 
         session = db.session.begin()
         try:
             # Is this a desired behaviour?
-            session.query(BotChannelMemeber).join(Bot).join(Channel).filter(
-                Channel.chat_id == message.chat_id
+            session.query(BotChannelMember).filter(
+                BotChannelMemeber.channel_id == channel.id
             ).delete()
             session.flush()
-            session.query(HumanChannelMember).join(Human).join(Channel).filter(
-                Channel.chat_id == message.chat_id
+            session.query(HumanChannelMember).filter(
+                HumanChannelMember.channel_id == channel.id
             ).delete()
             session.flush()
             session.delete(channel)

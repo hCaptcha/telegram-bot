@@ -103,7 +103,7 @@ class BotChannelMember(db.Model):
     channel = db.relationship('Channel', foreign_keys='BotChannelMember.channel_id')
 
     def __init__(self, bot_id, channel_id):
-        self.bot_id = human_id
+        self.bot_id = bot_id
         self.channel_id = channel_id
 
     def __repr__(self):

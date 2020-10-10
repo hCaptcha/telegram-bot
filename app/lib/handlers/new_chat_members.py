@@ -52,12 +52,15 @@ class NewChatMembersFilter(BaseHandler):
             )
            
             # Add user/bot to the db if not exists
+            channel = db.session.query(Channel).filter(
+                    Channel.chat_id == str(chat_id), Channel.restrict == True
+                ).one()
             if user.is_bot:
-                bot, _ = self.get_or_create(Bot, user_id=user.id, user_name=user.user_name)
-                self.get_or_create(BotChannelMember, bot_id=human.id, channel_id=chat_id)
+                bot, _ = self.get_or_create(Bot, user_id=str(user.id), user_name=user.username)
+                self.get_or_create(BotChannelMember, bot_id=bot.id, channel_id=channel.id)
             else:
-                human, _ = self.get_or_create(Human, user_id=user.id, user_name=user.user_name, verified=False)
-                self.get_or_create(HumanChannelMember, human_id=human.id, channel_id=chat_id)
+                human, _ = self.get_or_create(Human, user_id=str(user.id), user_name=user.username, verified=False)
+                self.get_or_create(HumanChannelMember, human_id=human.id, channel_id=channel.id)
 
 
             self.logger.info("Sending bot link...")

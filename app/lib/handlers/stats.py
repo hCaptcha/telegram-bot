@@ -19,13 +19,19 @@ class StatsCommand(BaseHandler):
             context.bot, chat_id, update.message.from_user.id, channel_name
         ):
             
-                bots = db.session.query(BotChannelMember).join(Channel).filter(
+                num_bots = db.session.query(BotChannelMember).join(Channel).filter(
                     Channel.chat_id == str(update.message.chat_id)
-                ).all()
-                humans = db.session.query(HumanChannelMember).join(Channel).filter(
+                ).count()
+                num_humans = db.session.query(HumanChannelMember).join(Channel).filter(
                     Channel.chat_id == str(update.message.chat_id)
-                ).all()
-                update.message.reply_text("Humans: {}, Bots: {}".format(len(humans), len(bots)))
+                ).count()
+                num_all_user = num_humans + num_bots
+                percent_humans = num_humans/float(num_all_user)*100
+                percent_bots = num_bots/float(num_all_user)*100
+                update.message.reply_text("Current channel stats:\nHumans: {:.2f}%({})\nBots: {:.2f}%({})"\
+                        .format(percent_humans, num_humans, percent_bots, num_bots)
+                        )
+                #TODO Add stats for verified/unverified humans
 
         else:
             update.message.reply_text("You don't have permission to get stats")
