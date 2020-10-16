@@ -2,7 +2,6 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from telegram.error import BadRequest
-from test_helpers import BaseCase
 
 from app import create_app
 from app.config import app_config
@@ -10,6 +9,7 @@ from app.extensions import db
 from app.lib.bot import HCaptchaBot
 from app.lib.cleanup_worker import CleanupWorker
 from app.models import Message
+from test_helpers import BaseCase
 
 
 class TestCleanupWorker(BaseCase):

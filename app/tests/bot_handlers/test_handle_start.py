@@ -1,12 +1,12 @@
 import unittest
 from unittest.mock import MagicMock, call
 
-from base import TestBotHandlersBase
 from telegram import ChatPermissions, User
 
 from app.extensions import db
 from app.lib.handlers.start import StartCommand
 from app.models import Channel, Human
+from base import TestBotHandlersBase
 
 
 class TestHandler(TestBotHandlersBase):
