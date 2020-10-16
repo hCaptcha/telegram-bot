@@ -14,7 +14,8 @@ class TestHandler(TestBotHandlersBase):
         human = Human.query.filter_by(user_id="1").one_or_none()
         user = User(id=1, first_name="Joe", last_name="Doe", is_bot=False)
         self.bot.get_updates = MagicMock(return_value=[self.fake_update()])
-        self.bot.send_message = MagicMock(return_value=None)
+        self.bot.send_message = MagicMock(return_value={"message_id":"123456","chat":{"id":"123456"}})
+        command.add_message_info = MagicMock(return_value=None)
         self.bot.restrict_chat_member = MagicMock(return_value=None)
         update_event = self.bot.get_updates().pop()
 
@@ -60,6 +61,7 @@ class TestHandler(TestBotHandlersBase):
         )
 
         self.bot.send_message.reset_mock()
+        command.add_message_info.reset_mock()
         self.bot.restrict_chat_member.reset_mock()
 
         # when callback_chat_id is set, user is verified

@@ -1,4 +1,5 @@
 from app.extensions import db
+from datetime import datetime
 
 
 class Channel(db.Model):
@@ -39,3 +40,23 @@ class Human(db.Model):
 
     def __repr__(self):
         return "<id {}>".format(self.id)
+
+class Message(db.Model):
+    __tablename__ = "messages"
+    __table_args__ = (
+        db.UniqueConstraint('message_id', 'chat_id'),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(), nullable=False)
+    chat_id = db.Column(db.String(), nullable=False)
+    message_id = db.Column(db.String(), nullable=False)
+    created_date = db.Column(db.DateTime, default=datetime.now)
+
+    def __init__(self, user_id, chat_id, message_id):
+        self.user_id = user_id
+        self.chat_id = chat_id
+        self.message_id = message_id
+
+    def __repr__(self):
+        return "<Message {}>".format(self.id)

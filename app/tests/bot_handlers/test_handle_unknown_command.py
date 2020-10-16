@@ -11,7 +11,8 @@ class TestHandler(TestBotHandlersBase):
         self.bot.get_updates = MagicMock(
             return_value=[self.fake_update(text="/lorem ipsum")]
         )
-        self.bot.send_message = MagicMock(return_value=None)
+        self.bot.send_message = MagicMock(return_value={"message_id":"123","chat":{"id":"123"}})
+
         context = MagicMock()
         context.bot = self.bot
 
@@ -32,7 +33,9 @@ class TestHandler(TestBotHandlersBase):
                 ]
             )
 
+
         self.bot.send_message.reset_mock()
+        # command.add_message_info.reset_mock()
         self.bot.get_updates = MagicMock(
             return_value=[
                 self.fake_update(
