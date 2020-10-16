@@ -1,4 +1,13 @@
 #!/bin/bash
+CHECK=${CHECK:-false}
 
-black .
-isort $(find . -name '*.py')
+BLACK_ARGS=""
+ISORT_ARGS=""
+
+if [[ $CHECK == "true" ]]; then
+    BLACK_ARGS+=" --check"
+    ISORT_ARGS+=" --check-only"
+fi
+
+black $BLACK_ARGS .
+isort $ISORT_ARGS $(find . -name '*.py')
