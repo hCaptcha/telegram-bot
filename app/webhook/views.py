@@ -1,8 +1,7 @@
-from flask import Blueprint, request, current_app
+from flask import Blueprint, current_app, request
 from telegram import Update
 
 from app.config import get_active_config
-
 
 blueprint = Blueprint("webhook", __name__)
 

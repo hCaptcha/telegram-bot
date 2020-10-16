@@ -1,9 +1,10 @@
 import json
+
 from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
 
-from app.lib.handlers.base import BaseHandler, app_context
 from app.config import get_active_config
+from app.lib.handlers.base import BaseHandler, app_context
 
 
 class StartCommand(BaseHandler):
@@ -44,7 +45,9 @@ class StartCommand(BaseHandler):
                 chat_id=update.message.chat_id,
                 text="Hi, I'm a bot that helps verify you're human :)",
             )
-            self.add_message_info(res['message_id'], res['chat']['id'], update.message.from_user.id)
+            self.add_message_info(
+                res["message_id"], res["chat"]["id"], update.message.from_user.id
+            )
             self.send_challenge(
                 context.bot,
                 update.message.chat_id,
@@ -70,5 +73,4 @@ class StartCommand(BaseHandler):
                 }
             ),
         )
-        self.add_message_info(res['message_id'], res['chat']['id'], user.id)
-
+        self.add_message_info(res["message_id"], res["chat"]["id"], user.id)

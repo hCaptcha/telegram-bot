@@ -1,13 +1,15 @@
 import unittest
 from unittest.mock import MagicMock, patch
+
 from telegram.error import BadRequest
-from test_helpers import BaseCase
-from app.lib.bot import HCaptchaBot
-from app.lib.cleanup_worker import CleanupWorker
+
+from app import create_app
 from app.config import app_config
 from app.extensions import db
-from app import create_app
+from app.lib.bot import HCaptchaBot
+from app.lib.cleanup_worker import CleanupWorker
 from app.models import Message
+from test_helpers import BaseCase
 
 
 class TestCleanupWorker(BaseCase):
@@ -29,12 +31,16 @@ class TestCleanupWorker(BaseCase):
 
         self.test_worker.cleanup()
         self.test_bot.delete_message.assert_called()
-        message = Message.query.filter_by(user_id="2", chat_id="2", message_id="2").one_or_none()
+        message = Message.query.filter_by(
+            user_id="2", chat_id="2", message_id="2"
+        ).one_or_none()
         assert message is None
 
     def test_run_badrequest(self):
         """ Delete a message that is deleted on the telegram api <- BadRequest """
-        self.test_bot.delete_message = MagicMock(side_effect=BadRequest("Message not found"))
+        self.test_bot.delete_message = MagicMock(
+            side_effect=BadRequest("Message not found")
+        )
         # Add a message to the db
         message = Message(user_id="3", chat_id="3", message_id="3")
         db.session.add(message)
@@ -43,12 +49,13 @@ class TestCleanupWorker(BaseCase):
         self.test_worker.cleanup()
         self.test_bot.delete_message.assert_called()
         self.test_bot.delete_message.assert_called_with(chat_id="3", message_id="3")
-        message = Message.query.filter_by(user_id="3",\
-                chat_id="3", message_id="3").one_or_none()
+        message = Message.query.filter_by(
+            user_id="3", chat_id="3", message_id="3"
+        ).one_or_none()
         assert message is None
 
     def test_run_telegram_denied(self):
-        """ Delete a message that won't be deleted on Telegram because of
+        """Delete a message that won't be deleted on Telegram because of
         Telegram api limitations
         """
         self.test_bot.delete_message = MagicMock(return_value=False)
@@ -58,9 +65,11 @@ class TestCleanupWorker(BaseCase):
         db.session.commit()
 
         self.test_worker.cleanup()
-        message = Message.query.filter_by(user_id="4",\
-                    chat_id="4", message_id="4").one_or_none()
+        message = Message.query.filter_by(
+            user_id="4", chat_id="4", message_id="4"
+        ).one_or_none()
         assert message is not None
+
 
 if __name__ == "__main__":
     unittest.main()

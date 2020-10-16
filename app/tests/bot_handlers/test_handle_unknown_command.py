@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import MagicMock, call, patch
 
-from base import TestBotHandlersBase
 from app.lib.handlers.unknown import UnknownCommand
+from base import TestBotHandlersBase
 
 
 class TestHandler(TestBotHandlersBase):
@@ -11,12 +11,16 @@ class TestHandler(TestBotHandlersBase):
         self.bot.get_updates = MagicMock(
             return_value=[self.fake_update(text="/lorem ipsum")]
         )
-        self.bot.send_message = MagicMock(return_value={"message_id":"123","chat":{"id":"123"}})
+        self.bot.send_message = MagicMock(
+            return_value={"message_id": "123", "chat": {"id": "123"}}
+        )
 
         context = MagicMock()
         context.bot = self.bot
 
-        with patch("app.lib.handlers.help.HelpCommand.handler", return_value=None) as mock_handler:
+        with patch(
+            "app.lib.handlers.help.HelpCommand.handler", return_value=None
+        ) as mock_handler:
             command.handler(self.bot.get_updates().pop(), context)
 
             mock_handler.assert_called()
@@ -32,7 +36,6 @@ class TestHandler(TestBotHandlersBase):
                     )
                 ]
             )
-
 
         self.bot.send_message.reset_mock()
         # command.add_message_info.reset_mock()

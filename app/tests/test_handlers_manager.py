@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from app.lib.handlers_manager import HandlersManager
 
 
-class TestHandlersManager():
+class TestHandlersManager:
     def test_register(self):
         dispatcher = MagicMock(return_value=None)
         dispatcher.add_handler = MagicMock(return_value=None)

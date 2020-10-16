@@ -1,8 +1,8 @@
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from app.lib.handlers.base import BaseHandler, app_context
 from app.config import get_active_config
+from app.lib.handlers.base import BaseHandler, app_context
 from app.lib.handlers.help import HelpCommand
 
 

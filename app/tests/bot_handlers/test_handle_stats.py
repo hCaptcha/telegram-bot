@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import MagicMock, call
 
-from base import TestBotHandlersBase
 from app.lib.handlers.stats import StatsCommand
+from base import TestBotHandlersBase
 
 
 class TestHandler(TestBotHandlersBase):
