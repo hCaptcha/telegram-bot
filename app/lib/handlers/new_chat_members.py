@@ -52,10 +52,11 @@ class NewChatMembersFilter(BaseHandler):
             )
 
             self.logger.info("Sending bot link...")
-            self.send_bot_link(context.bot, chat_id, user)
+            res = self.send_bot_link(context.bot, chat_id, user)
+            self.add_message_info(res['message_id'], res['chat']['id'], user.id)
 
     def send_bot_link(self, bot, chat_id, user):
-        bot.send_message(
+        return bot.send_message(
             chat_id,
             f"Hi {user.name} 👋! Please click the following link to verify yourself before you're allowed to chat.**",
             parse_mode=ParseMode.MARKDOWN,

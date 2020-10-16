@@ -40,10 +40,11 @@ class StartCommand(BaseHandler):
                     text="You're already verified as human.",
                 )
         else:
-            context.bot.send_message(
+            res = context.bot.send_message(
                 chat_id=update.message.chat_id,
                 text="Hi, I'm a bot that helps verify you're human :)",
             )
+            self.add_message_info(res['message_id'], res['chat']['id'], update.message.from_user.id)
             self.send_challenge(
                 context.bot,
                 update.message.chat_id,
@@ -52,7 +53,7 @@ class StartCommand(BaseHandler):
             )
 
     def send_challenge(self, bot, chat_id, user, callback_chat_id=None):
-        bot.send_message(
+        res = bot.send_message(
             chat_id,
             f"Please click the following link to verify yourself before you're allowed to chat.**",
             parse_mode=ParseMode.MARKDOWN,
@@ -69,3 +70,5 @@ class StartCommand(BaseHandler):
                 }
             ),
         )
+        self.add_message_info(res['message_id'], res['chat']['id'], user.id)
+
