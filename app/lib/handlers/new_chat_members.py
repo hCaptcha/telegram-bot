@@ -1,11 +1,12 @@
 import json
-from telegram import Update, ParseMode, ChatPermissions
+
+from telegram import ChatPermissions, ParseMode, Update
 from telegram.ext import CallbackContext
 
+from app.config import get_active_config
 from app.extensions import db
 from app.lib.handlers.base import BaseHandler, app_context
 from app.lib.handlers.chat_created import ChatCreatedFilter
-from app.config import get_active_config
 from app.models import Channel
 
 
@@ -53,7 +54,7 @@ class NewChatMembersFilter(BaseHandler):
 
             self.logger.info("Sending bot link...")
             res = self.send_bot_link(context.bot, chat_id, user)
-            self.add_message_info(res['message_id'], res['chat']['id'], user.id)
+            self.add_message_info(res["message_id"], res["chat"]["id"], user.id)
 
     def send_bot_link(self, bot, chat_id, user):
         return bot.send_message(

@@ -1,10 +1,12 @@
 import unittest
-from telegram import Chat, User
 from unittest.mock import MagicMock
 
 from base import TestBotHandlersBase
-from app.models import Channel
+from telegram import Chat, User
+
 from app.lib.handlers.chat_created import ChatCreatedFilter
+from app.models import Channel
+
 
 class TestHandler(TestBotHandlersBase):
     def test(self):
@@ -15,7 +17,14 @@ class TestHandler(TestBotHandlersBase):
         self.bot.send_message = MagicMock(return_value=None)
         context = MagicMock()
         context.bot = self.bot
-        command.handler(self.fake_update(chat=new_channel_chat,channel_chat_created=True,from_user=invitee_user,), context)
+        command.handler(
+            self.fake_update(
+                chat=new_channel_chat,
+                channel_chat_created=True,
+                from_user=invitee_user,
+            ),
+            context,
+        )
 
         self.assertTrue(
             Channel.query.filter_by(chat_id="3", name="new_channel").one_or_none()

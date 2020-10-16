@@ -1,14 +1,15 @@
-import unittest
-import time
 import datetime
-from telegram import Update, Chat, Message, User
+import time
+import unittest
 from unittest.mock import MagicMock, call
 
-from app.lib.bot import HCaptchaBot
+from telegram import Chat, Message, Update, User
+
 from app.config import get_active_config
 from app.extensions import db
+from app.lib.bot import HCaptchaBot
 from app.models import Channel, Human
-from app.tests.test_helpers import BaseCase, AttrDict
+from app.tests.test_helpers import AttrDict, BaseCase
 
 
 class TestBotHandlersBase(BaseCase):

@@ -1,13 +1,14 @@
 import logging
-from telegram import Update, Bot
-from telegram.ext import Dispatcher, Updater
 from datetime import datetime
 from queue import Queue
 from threading import Thread
 
+from telegram import Bot, Update
+from telegram.ext import Dispatcher, Updater
+
 from app.config import get_active_config, should_run_webhook
-from app.lib.handlers_manager import HandlersManager
 from app.lib.cleanup_worker import CleanupWorker
+from app.lib.handlers_manager import HandlersManager
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.DEBUG
@@ -38,13 +39,13 @@ class HCaptchaBot:
             self.dispatcher = self.updater.dispatcher
 
         self.handlers_manager = HandlersManager(self.dispatcher, self.app)
-        self.worker = CleanupWorker(self.bot, self.app) 
+        self.worker = CleanupWorker(self.bot, self.app)
 
     def verify(self, *args):
         """
         Proxy function, for ease of use.
         """
-        
+
         return self.handlers_manager.verify(self.bot, *args)
 
     def setup(self):
@@ -91,7 +92,9 @@ class HCaptchaBot:
         self.dispatcher_thread.start()
 
     def _run_cleanup_worker(self):
-        self.cleanup_worker_thread = Thread(target=self.worker.run, name="cleanup_worker")
+        self.cleanup_worker_thread = Thread(
+            target=self.worker.run, name="cleanup_worker"
+        )
         self.cleanup_worker_thread.start()
 
     def run(self):

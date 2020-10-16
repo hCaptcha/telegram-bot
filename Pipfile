@@ -8,6 +8,8 @@ ipdb = "*"
 pytest = "*"
 coverage = "*"
 importlib-metadata = "*"
+isort = "*"
+black = "*"
 
 [packages]
 flask = ">=1.1"

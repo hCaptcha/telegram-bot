@@ -1,13 +1,14 @@
 import unittest
 from unittest.mock import MagicMock, call
 
-from app.lib.bot import HCaptchaBot
 from base import TestBotHandlersBase
-from app.lib.handlers.base import BaseHandler
+
+from app.config import app_config
 from app.extensions import db
+from app.lib.bot import HCaptchaBot
+from app.lib.handlers.base import BaseHandler
 from app.models import Human
 from app.tests.test_helpers import AttrDict
-from app.config import app_config
 
 
 class TestHandler(TestBotHandlersBase):
@@ -33,12 +34,18 @@ class TestHandler(TestBotHandlersBase):
         self.assertFalse(self.command.is_verified(h.user_id))
 
     def test_verify(self):
-        self.bot.send_message = MagicMock(return_value={"message_id":"1234","chat":{"id":"1234"}})
+        self.bot.send_message = MagicMock(
+            return_value={"message_id": "1234", "chat": {"id": "1234"}}
+        )
         self.worker.cleanup_all_user_messages = MagicMock(return_value=None)
-        self.command.verify(self.bot, chat_id="1234", user_id="2", user_name="test", callback_chat_id=None) 
+        self.command.verify(
+            self.bot,
+            chat_id="1234",
+            user_id="2",
+            user_name="test",
+            callback_chat_id=None,
+        )
         self.worker.cleanup_all_user_messages.assert_called_with("1234", "2")
-
-
 
     def test_can_restrict_channel(self):
         self.bot.get_chat = MagicMock(return_value=AttrDict({"type": "group"}))

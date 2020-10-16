@@ -1,9 +1,10 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 import atexit
 
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
 from app import captcha, webhook
-from app.config import app_config, active_config_name, get_active_config
+from app.config import active_config_name, app_config, get_active_config
 from app.lib.bot import HCaptchaBot
 
 

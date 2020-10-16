@@ -1,18 +1,21 @@
 import unittest
-from telegram import User, ChatPermissions
 from unittest.mock import MagicMock, call, patch
 
 from base import TestBotHandlersBase
+from telegram import ChatPermissions, User
+
+from app.extensions import db
 from app.lib.handlers.new_chat_members import NewChatMembersFilter
 from app.models import Channel
-from app.extensions import db
 
 
 class TestHandler(TestBotHandlersBase):
     def test(self):
         command = NewChatMembersFilter()
         self.bot.restrict_chat_member = MagicMock(return_value=None)
-        command.send_bot_link = MagicMock(return_value={"message_id":"123","chat":{"id":"123"}})
+        command.send_bot_link = MagicMock(
+            return_value={"message_id": "123", "chat": {"id": "123"}}
+        )
         command.add_message_info = MagicMock(return_value=None)
         # when bot first join
         self.bot.get_updates = MagicMock(
@@ -23,7 +26,9 @@ class TestHandler(TestBotHandlersBase):
         context.bot = self.bot
         command.handle_invitation = MagicMock(return_value=None)
 
-        with patch('app.lib.handlers.chat_created.ChatCreatedFilter.handler', return_value=None) as mock_handler:
+        with patch(
+            "app.lib.handlers.chat_created.ChatCreatedFilter.handler", return_value=None
+        ) as mock_handler:
             command.handler(update_event, context)
             mock_handler.assert_called()
             self.assertEqual(mock_handler.call_count, 1)

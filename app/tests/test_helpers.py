@@ -1,8 +1,8 @@
 import unittest
 
-from app.extensions import db
-from app.models import Human, Channel, Message
 from app import create_app
+from app.extensions import db
+from app.models import Channel, Human, Message
 
 
 class AttrDict(dict):

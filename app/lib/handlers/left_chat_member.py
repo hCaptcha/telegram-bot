@@ -2,8 +2,8 @@ from telegram import Update
 from telegram.ext import CallbackContext
 
 from app.extensions import db
-from app.models import Channel
 from app.lib.handlers.base import BaseHandler, app_context
+from app.models import Channel
 
 
 class LeftChatMemberFilter(BaseHandler):

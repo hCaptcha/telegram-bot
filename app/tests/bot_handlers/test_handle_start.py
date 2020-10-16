@@ -1,11 +1,12 @@
 import unittest
-from telegram import User, ChatPermissions
 from unittest.mock import MagicMock, call
 
 from base import TestBotHandlersBase
-from app.models import Channel, Human
+from telegram import ChatPermissions, User
+
 from app.extensions import db
 from app.lib.handlers.start import StartCommand
+from app.models import Channel, Human
 
 
 class TestHandler(TestBotHandlersBase):
@@ -14,7 +15,9 @@ class TestHandler(TestBotHandlersBase):
         human = Human.query.filter_by(user_id="1").one_or_none()
         user = User(id=1, first_name="Joe", last_name="Doe", is_bot=False)
         self.bot.get_updates = MagicMock(return_value=[self.fake_update()])
-        self.bot.send_message = MagicMock(return_value={"message_id":"123456","chat":{"id":"123456"}})
+        self.bot.send_message = MagicMock(
+            return_value={"message_id": "123456", "chat": {"id": "123456"}}
+        )
         command.add_message_info = MagicMock(return_value=None)
         self.bot.restrict_chat_member = MagicMock(return_value=None)
         update_event = self.bot.get_updates().pop()

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+black .
+isort $(find . -name '*.py')

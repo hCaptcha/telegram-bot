@@ -1,10 +1,10 @@
-from flask import Blueprint, render_template, request, current_app
-import urllib.request
-import urllib.parse
 import json
+import urllib.parse
+import urllib.request
+
+from flask import Blueprint, current_app, render_template, request
 
 from app.config import get_active_config
-
 
 blueprint = Blueprint("captcha", __name__, static_folder="../static")
 
