@@ -57,16 +57,6 @@ Incase you need to run your the application on heroku:
 1. Create a new account on [hCaptcha](https://www.hcaptcha.com/) and note the `sitekey` and the `secret token`
 1. Invite the bot to your Telegram channel and set it as admin
 
-### How to deploy
-
-- Check the "Setup" section above and make sure that tests passes locally.
-
-- Make sure you've already remote tracking for your target env: `git remote add <env> https://git.heroku.com/<app>.git`
-
-- deploy changes: `git push <env> your_dev_branch:master`
-
-- run migrations: `heroku run "python manage.py db upgrade -d app/migrations/" --remote <env>`
-
 ### Run tests
 
 1. `pipenv run python -m pytest`
@@ -75,6 +65,33 @@ Incase you need to run your the application on heroku:
   1. Show report: `pipenv run coverage report -m` or as html: `pipenv run coverage html && open htmlcov/index.html`
 1. Run single test method: e.g. `python -m pytest app/tests/test_bot.py -k 'test_is_verified'`
 1. Rung single test with `ipdb` breakpoint: `python -m pytest -s app/tests/bot_handlers/test_handle_invitation.py`
+
+### How to deploy
+
+- Check the "Setup" section above and make sure that tests passes locally.
+
+- If using the `herkou` cli approach, be sure to run this first:
+    - `heroku login`
+
+- Make sure you've already remote tracking for your target env (one of):
+    - `git remote add <env> https://git.heroku.com/<app>.git`
+    - `heroku git:remote -a staging-hcaptcha-telegram-bot`
+    - `heroku git:remote -a prod-hcaptcha-telegram-bot`
+        - If using the heroku command, you may want to rename the envs appropriately as they will all be called `heroku`
+        - `git remote rename heroku staging`
+
+- Deploy code changes:
+    - `git push <env> your_dev_branch:master` (push specified branch)
+    - `git push staging master:master` (push master from origin to staging remote master)
+
+- Run DB migrations:
+    - `heroku run "python manage.py db upgrade -d app/migrations/" --remote <env>`
+
+- If DB migration was needed you may need to manually start up the app:
+    - `heroku run web --remote <env>` (start up app inline)
+    - `heroku ps:scale web=1 --remote <env>` (start up more instances of the app)
+
+
 
 ### Troubleshooting
 
