@@ -66,7 +66,21 @@ Incase you need to run your the application on heroku:
 1. Run single test method: e.g. `python -m pytest app/tests/test_bot.py -k 'test_is_verified'`
 1. Rung single test with `ipdb` breakpoint: `python -m pytest -s app/tests/bot_handlers/test_handle_invitation.py`
 
-### How to deploy
+
+# Deploying
+
+## How to deploy automatically
+
+### Staging
+
+Simply merge all your changes to `staging` branch, and it will be deployed to the staging heroku on successful builds and tests passing in github.
+
+### Production
+
+Merge all your changes to `master` and it will be deployed to the prod environment.
+
+
+## How to deploy manually
 
 - Check the "Setup" section above and make sure that tests passes locally.
 
@@ -93,7 +107,16 @@ Incase you need to run your the application on heroku:
 
 
 
-### Troubleshooting
+## Environments
+
+- Prod:
+    - Bot name: `hCaptchaBot`
+    - URL: https://prod-hcaptcha-telegram-bot.herokuapp.com/
+- Staging:
+    - Bot name: `yellow_tg_bot`
+    - URL: https://staging-hcaptcha-telegram-bot.herokuapp.com/
+
+## Troubleshooting
 
 - Check logs on heroku: `heroku logs --tail --remote <env>`
 - The bot must be in a supergroup and the bot must be have admin permissions.
