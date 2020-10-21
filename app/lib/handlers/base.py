@@ -64,7 +64,7 @@ class BaseHandler:
         if self.is_verified(user_id):
             return
 
-        if is_exists(user_id):
+        if self.is_exists(user_id):
             db.session.query(       
                 Human.query.filter(                                                                             
                     Human.user_id == str(user_id)                                                                                                      

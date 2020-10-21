@@ -35,7 +35,7 @@ class LeftChatMemberFilter(BaseHandler):
                 ).delete()
                 db.session.commit()
             else:
-                human = db.session.query(human).filter_by(user_id=str(message.left_chat_member.id)).one_or_none()
+                human = db.session.query(Human).filter_by(user_id=str(message.left_chat_member.id)).one_or_none()
                 if human is None:
                     # Should never be called
                     return
@@ -50,18 +50,14 @@ class LeftChatMemberFilter(BaseHandler):
         self.logger.info(f"Leaving chat_id: {message.chat_id}...")
         
         # Delete 
-        session = db.session.begin()
-        try:
-            # Is this a desired behaviour?
-            session.query(BotChannelMember).filter(
-                BotChannelMemeber.channel_id == channel.id
-            ).delete()
-            session.flush()
-            session.query(HumanChannelMember).filter(
-                HumanChannelMember.channel_id == channel.id
-            ).delete()
-            session.flush()
-            session.delete(channel)
-            session.commit()
-        except:
-            session.rollback()
+        # Is this a desired behaviour?
+        db.session.query(BotChannelMember).filter(
+            BotChannelMember.channel_id == channel.id
+        ).delete()
+        db.session.flush()
+        db.session.query(HumanChannelMember).filter(
+            HumanChannelMember.channel_id == channel.id
+        ).delete()
+        db.session.flush()
+        db.session.delete(channel)
+        db.session.commit()

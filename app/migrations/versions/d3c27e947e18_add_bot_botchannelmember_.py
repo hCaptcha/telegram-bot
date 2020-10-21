@@ -1,8 +1,8 @@
 """Add bot, botchannelmember, humanchannelmember table
 
-Revision ID: 88b4e47162f7
-Revises: 637cbd4ef606
-Create Date: 2020-10-10 10:14:24.931256
+Revision ID: d3c27e947e18
+Revises: b4ea7b2c0b57
+Create Date: 2020-10-22 01:31:34.220398
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '88b4e47162f7'
-down_revision = '637cbd4ef606'
+revision = 'd3c27e947e18'
+down_revision = 'b4ea7b2c0b57'
 branch_labels = None
 depends_on = None
 
