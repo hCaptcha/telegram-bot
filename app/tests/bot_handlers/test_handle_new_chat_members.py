@@ -5,8 +5,13 @@ from telegram import ChatPermissions, User
 
 from app.extensions import db
 from app.lib.handlers.new_chat_members import NewChatMembersFilter
-from app.models import (Bot, BotChannelMember, Channel, Human,
-                        HumanChannelMember)
+from app.models import (
+    Bot,
+    BotChannelMember,
+    Channel,
+    Human,
+    HumanChannelMember,
+)
 from base import TestBotHandlersBase
 
 
