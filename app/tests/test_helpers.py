@@ -2,7 +2,7 @@ import unittest
 
 from app import create_app
 from app.extensions import db
-from app.models import Channel, Human, Message
+from app.models import Channel, Human, Message, HumanChannelMember, BotChannelMember
 
 
 class AttrDict(dict):
@@ -26,6 +26,7 @@ class BaseCase(unittest.TestCase):
 
     def create_fixtures(self):
         human = Human(user_id="1", user_name="joe")
+        bot = Human(user_id="1", user_name="bot1")
         channel = Channel(chat_id="1", name="test", restrict=False)
         message = Message(user_id="1", chat_id="1", message_id="1")
 

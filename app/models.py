@@ -60,3 +60,51 @@ class Message(db.Model):
 
     def __repr__(self):
         return "<Message {}>".format(self.id)
+
+class Bot(db.Model):
+    __tablename__ = "bots"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(), unique=True, nullable=False)
+    user_name = db.Column(db.String(), nullable=False)
+
+    def __init__(
+        self, user_id, user_name
+    ):
+        self.user_id = user_id
+        self.user_name = user_name
+
+    def __repr__(self):
+        return "<Bot {}>".format(self.id)
+
+class HumanChannelMember(db.Model):
+    __tablename__ = "humans_channels"
+
+    human_id = db.Column(db.Integer, db.ForeignKey(Human.id), primary_key=True)
+    channel_id = db.Column(db.Integer, db.ForeignKey(Channel.id), primary_key=True)
+
+    human = db.relationship('Human', foreign_keys='HumanChannelMember.human_id')
+    channel = db.relationship('Channel', foreign_keys='HumanChannelMember.channel_id')
+
+    def __init__(self, human_id, channel_id):
+        self.human_id = human_id
+        self.channel_id = channel_id
+
+    def __repr__(self):
+        return "<HumanChannelMember (human_id: {}, channel_id: {})>".format(self.human_id, self.channel_id)
+
+class BotChannelMember(db.Model):
+    __tablename__ = "bots_channels"
+
+    bot_id = db.Column(db.Integer, db.ForeignKey(Bot.id), primary_key=True)
+    channel_id = db.Column(db.Integer, db.ForeignKey(Channel.id), primary_key=True)
+
+    bot = db.relationship('Bot', foreign_keys='BotChannelMember.bot_id')
+    channel = db.relationship('Channel', foreign_keys='BotChannelMember.channel_id')
+
+    def __init__(self, bot_id, channel_id):
+        self.bot_id = bot_id
+        self.channel_id = channel_id
+
+    def __repr__(self):
+        return "<BotChannelMember (bot_id: {}, channel_id: {})>".format(self.bot_id, self.channel_id)

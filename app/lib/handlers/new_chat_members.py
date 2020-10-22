@@ -1,13 +1,12 @@
 import json
-
-from telegram import ChatPermissions, ParseMode, Update
+from telegram import Update, ParseMode, ChatPermissions
 from telegram.ext import CallbackContext
 
-from app.config import get_active_config
 from app.extensions import db
 from app.lib.handlers.base import BaseHandler, app_context
 from app.lib.handlers.chat_created import ChatCreatedFilter
-from app.models import Channel
+from app.config import get_active_config
+from app.models import Channel, Bot, Human, BotChannelMember, HumanChannelMember
 
 
 class NewChatMembersFilter(BaseHandler):
@@ -51,11 +50,23 @@ class NewChatMembersFilter(BaseHandler):
                     can_send_other_messages=False,
                 ),
             )
+           
+            # Add user/bot to the db if not exists
+            channel = db.session.query(Channel).filter(
+                    Channel.chat_id == str(chat_id), Channel.restrict == True
+                ).one()
+            
+            if user.is_bot:
+                bot, _ = self.get_or_create(Bot, user_id=str(user.id), user_name=user.username)
+                self.get_or_create(BotChannelMember, bot_id=bot.id, channel_id=channel.id)
+            else:
+                human, _ = self.get_or_create(Human, user_id=str(user.id), user_name=user.username, verified=False)
+                self.get_or_create(HumanChannelMember, human_id=human.id, channel_id=channel.id)
+
 
             self.logger.info("Sending bot link...")
             res = self.send_bot_link(context.bot, chat_id, user)
             self.add_message_info(res["message_id"], res["chat"]["id"], user.id)
-
     def send_bot_link(self, bot, chat_id, user):
         return bot.send_message(
             chat_id,
