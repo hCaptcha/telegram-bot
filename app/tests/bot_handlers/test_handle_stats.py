@@ -1,9 +1,10 @@
 import unittest
 from unittest.mock import MagicMock, call
 
-from app.lib.handlers.stats import StatsCommand
 from app.extensions import db
-from app.models import Channel, Human, Bot, HumanChannelMember, BotChannelMember
+from app.lib.handlers.stats import StatsCommand
+from app.models import (Bot, BotChannelMember, Channel, Human,
+                        HumanChannelMember)
 from base import TestBotHandlersBase
 
 
@@ -19,10 +20,10 @@ class TestHandler(TestBotHandlersBase):
         context.bot = self.bot
         # Create required db records for calculating stats
         channel = Channel.query.filter_by(chat_id="1").first()
-        random_human_1 = Human(user_id="3", user_name="tt") 
-        random_human_2 = Human(user_id="4", user_name="tt") 
-        random_bot_1 = Bot(user_id="5", user_name="tt") 
-        random_bot_2 = Bot(user_id="6", user_name="tt") 
+        random_human_1 = Human(user_id="3", user_name="tt")
+        random_human_2 = Human(user_id="4", user_name="tt")
+        random_bot_1 = Bot(user_id="5", user_name="tt")
+        random_bot_2 = Bot(user_id="6", user_name="tt")
         db.session.add(random_human_1)
         db.session.flush()
         human1_id = random_human_1.id
@@ -42,12 +43,12 @@ class TestHandler(TestBotHandlersBase):
         db.session.add(HumanChannelMember(human_id=human2_id, channel_id=channel.id))
         db.session.add(BotChannelMember(bot_id=bot1_id, channel_id=channel.id))
         db.session.add(BotChannelMember(bot_id=bot2_id, channel_id=channel.id))
-        
+
         command.can_get_stats = MagicMock(return_value=True)
         command.handler(update_event, context)
-        
+
         # can get stats
-        command.reply_stats.assert_called_with(update_event.message, 50.0, 2, 50.0, 2) 
+        command.reply_stats.assert_called_with(update_event.message, 50.0, 2, 50.0, 2)
 
         # can't get stats
         command.can_get_stats = MagicMock(return_value=False)

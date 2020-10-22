@@ -2,7 +2,8 @@ import unittest
 
 from app import create_app
 from app.extensions import db
-from app.models import Channel, Human, Message, HumanChannelMember, BotChannelMember
+from app.models import (BotChannelMember, Channel, Human, HumanChannelMember,
+                        Message)
 
 
 class AttrDict(dict):

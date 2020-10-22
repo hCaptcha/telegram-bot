@@ -33,14 +33,12 @@ class BaseHandler:
             Human.query.filter(
                 Human.user_id == str(user_id), Human.verified == True
             ).exists()
-            ).scalar()
+        ).scalar()
 
     def is_exists(self, user_id):
         return db.session.query(
-            Human.query.filter(
-                Human.user_id == str(user_id)
-            ).exists()
-            ).scalar()
+            Human.query.filter(Human.user_id == str(user_id)).exists()
+        ).scalar()
 
     def get_or_create(self, model, defaults=None, **kwargs):
         self.logger.debug(f"Get or create a {type(model)}({kwargs})")
@@ -53,7 +51,6 @@ class BaseHandler:
             db.session.commit()
             return instance, True
 
-
     def verify(self, bot, chat_id, user_id, user_name, callback_chat_id):
         """
         - Record that the user is human
@@ -65,16 +62,12 @@ class BaseHandler:
             return
 
         if self.is_exists(user_id):
-            db.session.query(       
-                Human.query.filter(                                                                             
-                    Human.user_id == str(user_id)                                                                                                      
-                    ).update(                                                                                                                                         
-                        {                                
-                            "verification_date": datetime.today(),
-                            "verified": True                                                                                                                          
-                        }                                                                                                                                             
-                        ))                                                                                                                                                 
-            db.session.commit() 
+            db.session.query(
+                Human.query.filter(Human.user_id == str(user_id)).update(
+                    {"verification_date": datetime.today(), "verified": True}
+                )
+            )
+            db.session.commit()
         else:
             # Should never be called
             db.session.add(
