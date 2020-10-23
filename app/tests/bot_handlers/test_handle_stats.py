@@ -17,6 +17,12 @@ class TestHandler(TestBotHandlersBase):
 
         context = MagicMock()
         context.bot = self.bot
+        command.can_get_stats = MagicMock(return_value=True)
+        command.handler(update_event, context)
+        
+        # case when there is no bot/human in the channel
+        command.reply_stats.assert_called_with(update_event.message, 0.0, 0, 0.0, 0) 
+
         # Create required db records for calculating stats
         channel = Channel.query.filter_by(chat_id="1").first()
         random_human_1 = Human(user_id="3", user_name="tt") 
@@ -43,9 +49,7 @@ class TestHandler(TestBotHandlersBase):
         db.session.add(BotChannelMember(bot_id=bot1_id, channel_id=channel.id))
         db.session.add(BotChannelMember(bot_id=bot2_id, channel_id=channel.id))
         
-        command.can_get_stats = MagicMock(return_value=True)
         command.handler(update_event, context)
-        
         # can get stats
         command.reply_stats.assert_called_with(update_event.message, 50.0, 2, 50.0, 2) 
 

@@ -25,8 +25,12 @@ class StatsCommand(BaseHandler):
                     Channel.chat_id == str(update.message.chat_id)
                 ).count()
                 num_all_user = num_humans + num_bots
-                percent_humans = num_humans/float(num_all_user)*100
-                percent_bots = num_bots/float(num_all_user)*100
+                if num_all_user == 0:
+                    percent_humans = 0
+                    percent_bots = 0
+                else:
+                    percent_humans = num_humans/float(num_all_user)*100
+                    percent_bots = num_bots/float(num_all_user)*100
                 self.reply_stats(update.message, percent_humans, num_humans, percent_bots, \
                         num_bots)
 
