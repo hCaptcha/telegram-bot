@@ -1,11 +1,11 @@
 import unittest
 from unittest.mock import MagicMock
 
+from base import TestBotHandlersBase
 from telegram import Chat, User
 
 from app.lib.handlers.chat_created import ChatCreatedFilter
 from app.models import Channel
-from base import TestBotHandlersBase
 
 
 class TestHandler(TestBotHandlersBase):

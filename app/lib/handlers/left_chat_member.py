@@ -2,8 +2,9 @@ from telegram import Update
 from telegram.ext import CallbackContext
 
 from app.extensions import db
-from app.models import Channel, Human, HumanChannelMember, Bot, BotChannelMember
 from app.lib.handlers.base import BaseHandler, app_context
+from app.models import (Bot, BotChannelMember, Channel, Human,
+                        HumanChannelMember)
 
 
 class LeftChatMemberFilter(BaseHandler):
@@ -21,35 +22,41 @@ class LeftChatMemberFilter(BaseHandler):
             )
             return
 
-
         # Only handle case when bot was removed from channel
         if not message.left_chat_member.id == context.bot.id:
             if message.left_chat_member.is_bot:
-                bot = db.session.query(Bot).filter_by(user_id=str(message.left_chat_member.id)).one_or_none()
+                bot = (
+                    db.session.query(Bot)
+                    .filter_by(user_id=str(message.left_chat_member.id))
+                    .one_or_none()
+                )
                 if bot is None:
                     # Should never be called
                     return
                 db.session.query(BotChannelMember).filter(
                     BotChannelMember.bot_id == bot.id,
-                    BotChannelMember.channel_id == channel.id
+                    BotChannelMember.channel_id == channel.id,
                 ).delete()
                 db.session.commit()
             else:
-                human = db.session.query(Human).filter_by(user_id=str(message.left_chat_member.id)).one_or_none()
+                human = (
+                    db.session.query(Human)
+                    .filter_by(user_id=str(message.left_chat_member.id))
+                    .one_or_none()
+                )
                 if human is None:
                     # Should never be called
                     return
                 db.session.query(HumanChannelMember).filter(
                     HumanChannelMember.human_id == human.id,
-                    HumanChannelMember.channel_id == channel.id
+                    HumanChannelMember.channel_id == channel.id,
                 ).delete()
                 db.session.commit()
             return
 
-        
         self.logger.info(f"Leaving chat_id: {message.chat_id}...")
-        
-        # Delete 
+
+        # Delete
         # Is this a desired behaviour?
         db.session.query(BotChannelMember).filter(
             BotChannelMember.channel_id == channel.id

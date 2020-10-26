@@ -98,9 +98,12 @@ class HCaptchaBot:
         self.cleanup_worker_thread.start()
 
     def run(self):
-        if should_run_webhook():
-            self._run_webhook()
-        else:
-            self._run_polling()
-        # Run the cleanup worker in a seperate thread.
-        self._run_cleanup_worker()
+        try:
+            if should_run_webhook():
+                self._run_webhook()
+            else:
+                self._run_polling()
+            # Run the cleanup worker in a seperate thread.
+            self._run_cleanup_worker()
+        except Exception as e:
+            print(e)

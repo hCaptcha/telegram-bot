@@ -1,12 +1,13 @@
 import unittest
 from unittest.mock import MagicMock, call, patch
 
+from base import TestBotHandlersBase
 from telegram import ChatPermissions, User
 
 from app.extensions import db
 from app.lib.handlers.new_chat_members import NewChatMembersFilter
-from app.models import Channel, Human, HumanChannelMember, Bot, BotChannelMember
-from base import TestBotHandlersBase
+from app.models import (Bot, BotChannelMember, Channel, Human,
+                        HumanChannelMember)
 
 
 class TestHandler(TestBotHandlersBase):
@@ -80,15 +81,16 @@ class TestHandler(TestBotHandlersBase):
         db.session.commit()
         command.handler(update_event, context)
         # This must create new Human & HumanChannelMember records in the db
-        new_human = db.session.query(Human).filter(
-                    Human.user_id == "101"
-                ).one()
+        new_human = db.session.query(Human).filter(Human.user_id == "101").one()
         assert new_human is not None
-        new_human_channel_member = db.session.query(HumanChannelMember).filter(
-                    HumanChannelMember.human_id == new_human.id,
-                    HumanChannelMember.channel_id == 1 
-
-                ).one()
+        new_human_channel_member = (
+            db.session.query(HumanChannelMember)
+            .filter(
+                HumanChannelMember.human_id == new_human.id,
+                HumanChannelMember.channel_id == 1,
+            )
+            .one()
+        )
         assert new_human_channel_member is not None
 
         self.bot.restrict_chat_member.assert_called()
@@ -117,14 +119,15 @@ class TestHandler(TestBotHandlersBase):
         update_event = self.bot.get_updates().pop()
         command.handler(update_event, context)
         # This must create new Bot & BotChannelMember records in the db
-        new_bot = db.session.query(Bot).filter(
-                    Bot.user_id == "102"
-                ).one()
+        new_bot = db.session.query(Bot).filter(Bot.user_id == "102").one()
         assert new_bot is not None
-        new_bot_channel_member = db.session.query(BotChannelMember).filter(
-                    BotChannelMember.bot_id == new_bot.id,
-                    BotChannelMember.channel_id == 1
-                ).one()
+        new_bot_channel_member = (
+            db.session.query(BotChannelMember)
+            .filter(
+                BotChannelMember.bot_id == new_bot.id, BotChannelMember.channel_id == 1
+            )
+            .one()
+        )
         assert new_bot_channel_member is not None
 
     def test_should_restrict_channel(self):

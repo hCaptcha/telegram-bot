@@ -1,20 +1,22 @@
 import unittest
 from unittest.mock import MagicMock
 
+from base import TestBotHandlersBase
 from telegram import User
 
+from app.extensions import db
 from app.lib.handlers.new_chat_members import NewChatMembersFilter
 from app.lib.handlers.restrict import RestrcitCommand
-from app.extensions import db
 from app.models import Channel
 from app.tests.test_helpers import AttrDict
-from base import TestBotHandlersBase
 
 
 class TestHandler(TestBotHandlersBase):
     def test(self):
         command = NewChatMembersFilter()
-        user = User(id=1111, first_name="Joe", last_name="Doe", username="joe_doe", is_bot=False)
+        user = User(
+            id=1111, first_name="Joe", last_name="Doe", username="joe_doe", is_bot=False
+        )
 
         update_event = self.fake_update(new_chat_members=[user])
         context = MagicMock()
@@ -42,7 +44,6 @@ class TestHandler(TestBotHandlersBase):
         command.can_restrict_channel = MagicMock(return_value=True)
         command.should_restrict_channel = MagicMock(return_value=True)
 
-        
         # First update the channel
         chan = Channel.query.filter_by(chat_id="1").first()
         chan.restrict = True

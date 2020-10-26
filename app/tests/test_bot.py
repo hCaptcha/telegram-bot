@@ -1,9 +1,10 @@
 import unittest
 from unittest.mock import MagicMock
 
+from test_helpers import BaseCase
+
 from app.config import app_config
 from app.lib.bot import HCaptchaBot
-from test_helpers import BaseCase
 
 
 class TestBot(BaseCase):

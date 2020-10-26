@@ -23,6 +23,7 @@ flask-migrate = ">=2.1"
 flask-testing = "*"
 psycopg2-binary = "*"
 schedule = "*"
+geopy = "*"
 
 [requires]
 python_version = "3.7"

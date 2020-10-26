@@ -1,8 +1,9 @@
 import unittest
 from unittest.mock import MagicMock, call, patch
 
-from app.lib.handlers.unknown import UnknownCommand
 from base import TestBotHandlersBase
+
+from app.lib.handlers.unknown import UnknownCommand
 
 
 class TestHandler(TestBotHandlersBase):

@@ -1,13 +1,13 @@
 import unittest
 from unittest.mock import MagicMock
 
+from base import TestBotHandlersBase
 from telegram import Chat, User
 
 from app.extensions import db
 from app.lib.handlers.left_chat_member import LeftChatMemberFilter
-from app.models import Channel, Human, HumanChannelMember, Bot, BotChannelMember
-
-from base import TestBotHandlersBase
+from app.models import (Bot, BotChannelMember, Channel, Human,
+                        HumanChannelMember)
 
 
 class TestHandler(TestBotHandlersBase):
@@ -23,10 +23,10 @@ class TestHandler(TestBotHandlersBase):
         random_bot_2 = User(id=12, first_name="tt", user_name="test3", is_bot=True)
 
         # Create required db records
-        human_1 = Human(user_id="111", user_name="tt") 
-        human_2 = Human(user_id="112", user_name="tt") 
-        bot_1 = Bot(user_id="11", user_name="tt") 
-        bot_2 = Bot(user_id="12", user_name="tt") 
+        human_1 = Human(user_id="111", user_name="tt")
+        human_2 = Human(user_id="112", user_name="tt")
+        bot_1 = Bot(user_id="11", user_name="tt")
+        bot_2 = Bot(user_id="12", user_name="tt")
         db.session.add(human_1)
         db.session.flush()
         human1_id = human_1.id
@@ -44,10 +44,8 @@ class TestHandler(TestBotHandlersBase):
         db.session.add(HumanChannelMember(human_id=human2_id, channel_id=channel.id))
         db.session.add(BotChannelMember(bot_id=bot1_id, channel_id=channel.id))
         db.session.add(BotChannelMember(bot_id=bot2_id, channel_id=channel.id))
-        
 
         bot_user = self.bot
-
 
         self.bot.get_updates = MagicMock(
             return_value=[
@@ -72,27 +70,44 @@ class TestHandler(TestBotHandlersBase):
         # handle case when a random user leave
         command.handler(self.bot.get_updates().pop(), context)
         self.assertTrue(Channel.query.filter_by(chat_id="1").one_or_none())
-        self.assertFalse(HumanChannelMember.query.filter_by(channel_id=channel.id,\
-                human_id=human1_id).one_or_none())
-        self.assertTrue(HumanChannelMember.query.filter_by(channel_id=channel.id,\
-                human_id=human2_id).one_or_none())
+        self.assertFalse(
+            HumanChannelMember.query.filter_by(
+                channel_id=channel.id, human_id=human1_id
+            ).one_or_none()
+        )
+        self.assertTrue(
+            HumanChannelMember.query.filter_by(
+                channel_id=channel.id, human_id=human2_id
+            ).one_or_none()
+        )
 
         # handle case when a random bot leave
         command.handler(self.bot.get_updates().pop(), context)
         self.assertTrue(Channel.query.filter_by(chat_id="1").one_or_none())
-        self.assertFalse(BotChannelMember.query.filter_by(channel_id=channel.id,\
-                bot_id=bot1_id).one_or_none())
-        self.assertTrue(BotChannelMember.query.filter_by(channel_id=channel.id,\
-                bot_id=bot2_id).one_or_none())
+        self.assertFalse(
+            BotChannelMember.query.filter_by(
+                channel_id=channel.id, bot_id=bot1_id
+            ).one_or_none()
+        )
+        self.assertTrue(
+            BotChannelMember.query.filter_by(
+                channel_id=channel.id, bot_id=bot2_id
+            ).one_or_none()
+        )
 
         # handle case when the bot leave (channel get removed from the database)
         command.handler(self.bot.get_updates().pop(), context)
         self.assertFalse(Channel.query.filter_by(chat_id="1").one_or_none())
-        self.assertFalse(HumanChannelMember.query.filter_by(channel_id=channel.id,\
-                human_id=human2_id).one_or_none())
-        self.assertFalse(BotChannelMember.query.filter_by(channel_id=channel.id,\
-                bot_id=bot2_id).one_or_none())
-
+        self.assertFalse(
+            HumanChannelMember.query.filter_by(
+                channel_id=channel.id, human_id=human2_id
+            ).one_or_none()
+        )
+        self.assertFalse(
+            BotChannelMember.query.filter_by(
+                channel_id=channel.id, bot_id=bot2_id
+            ).one_or_none()
+        )
 
 
 if __name__ == "__main__":

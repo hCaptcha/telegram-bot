@@ -1,13 +1,14 @@
 import unittest
 from unittest.mock import MagicMock, call
 
+from base import TestBotHandlersBase
+
 from app.config import app_config
 from app.extensions import db
 from app.lib.bot import HCaptchaBot
 from app.lib.handlers.base import BaseHandler
 from app.models import Human
 from app.tests.test_helpers import AttrDict
-from base import TestBotHandlersBase
 
 
 class TestHandler(TestBotHandlersBase):

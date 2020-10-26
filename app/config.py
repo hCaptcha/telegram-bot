@@ -49,7 +49,9 @@ class StagingConfig(Config):
 class DevelopmentConfig(Config):
     DEBUG = True
     APP_URL = os.getenv("APP_URL", "http://127.0.0.1:8000/")
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "postgresql://localhost/thb")
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        "DATABASE_URL", "postgresql://postgres:@localhost/thb"
+    )
 
 
 class TestingConfig(Config):
