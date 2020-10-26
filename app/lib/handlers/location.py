@@ -31,12 +31,13 @@ class LocationFilter(BaseHandler):
 
         human = Human.query.filter(
             Human.user_id == str(user_id),
-        ).none_or_one()
+        ).one_or_none()
         if human is not None:
             # Update location
             geolocator = Nominatim(user_agent="hcaptcha-bot")
             human.lat = current_loc[0]
             human.lng = current_loc[1]
-            location = geolocator.reverse("{human.lat}, {human.lng}")
+            print(human.lat, human.lng)
+            location = geolocator.reverse((human.lat, human.lng))
             human.country_code = location.raw["address"]["country_code"]
             db.session.commit()

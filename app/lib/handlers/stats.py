@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from telegram import Update
 from telegram.ext import CallbackContext
 
@@ -23,17 +24,18 @@ class StatsCommand(BaseHandler):
         if self.can_get_stats(
             context.bot, chat_id, update.message.from_user.id, channel_name
         ):
-
+            channel = (
+                db.session.query(Channel).filter_by(chat_id=str(chat_id)).one_or_none()
+            )
+            print(channel)
             num_bots = (
                 db.session.query(BotChannelMember)
-                .join(Channel)
-                .filter(Channel.chat_id == str(update.message.chat_id))
+                .filter_by(channel_id=channel.id)
                 .count()
             )
             num_humans = (
                 db.session.query(HumanChannelMember)
-                .join(Channel)
-                .filter(Channel.chat_id == str(update.message.chat_id))
+                .filter_by(channel_id=channel.id)
                 .count()
             )
             num_all_user = num_humans + num_bots
@@ -43,8 +45,36 @@ class StatsCommand(BaseHandler):
             else:
                 percent_humans = num_humans / float(num_all_user) * 100
                 percent_bots = num_bots / float(num_all_user) * 100
+            count_per_country = (
+                db.session.query(Human.country_code, func.count(Human.country_code))
+                .join(HumanChannelMember)
+                .filter(HumanChannelMember.channel_id == channel.id)
+                .group_by(Human.country_code)
+                .all()
+            )
+            # Find percent of each country for the channel
+            percent_per_country = map(
+                lambda x: (
+                    x[0] if x[0] is not None else "unknown",
+                    (float(x[1]) / num_humans) * 100.0,
+                ),
+                count_per_country,
+            )
+            print(percent_per_country)
+            to_sorted_text = list(
+                map(
+                    lambda x: "{}: {:.2f}%".format(x[0], x[1]),
+                    sorted(percent_per_country, key=lambda item: item[0]),
+                )
+            )
+
             self.reply_stats(
-                update.message, percent_humans, num_humans, percent_bots, num_bots
+                update.message,
+                percent_humans,
+                num_humans,
+                percent_bots,
+                num_bots,
+                to_sorted_text,
             )
 
         else:
@@ -61,9 +91,21 @@ class StatsCommand(BaseHandler):
         user_status = bot.get_chat_member(chat_id, user_id).status
         return user_status == "admin"
 
-    def reply_stats(self, message, percent_humans, num_humans, percent_bots, num_bots):
+    def reply_stats(
+        self,
+        message,
+        percent_humans,
+        num_humans,
+        percent_bots,
+        num_bots,
+        per_country_sorted,
+    ):
         message.reply_text(
-            "Current channel stats:\nHumans: {:.2f}%({})\nBots: {:.2f}%({})".format(
-                percent_humans, num_humans, percent_bots, num_bots
+            "Current channel stats:\nHumans: {:.2f}%({})\nBots: {:.2f}%({})\nPercent of users, per country:\n{}".format(
+                percent_humans,
+                num_humans,
+                percent_bots,
+                num_bots,
+                "\n".join(per_country_sorted),
             )
         )
