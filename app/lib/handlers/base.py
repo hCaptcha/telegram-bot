@@ -134,7 +134,11 @@ class BaseHandler:
     def add_message_info(self, message_id, chat_id, user_id):
         """ Add a message(chat_id, message_id) to the db, so we can delete the message later """
         db.session.add(
-            Message(chat_id=chat_id, message_id=message_id, user_id=str(user_id),)
+            Message(
+                chat_id=chat_id,
+                message_id=message_id,
+                user_id=str(user_id),
+            )
         )
         db.session.commit()
         self.logger.debug(f"Recording the message that just sent ...")

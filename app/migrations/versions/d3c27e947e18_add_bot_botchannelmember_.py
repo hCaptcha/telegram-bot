@@ -29,16 +29,28 @@ def upgrade():
         "bots_channels",
         sa.Column("bot_id", sa.Integer(), nullable=False),
         sa.Column("channel_id", sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(["bot_id"], ["bots.id"],),
-        sa.ForeignKeyConstraint(["channel_id"], ["channels.id"],),
+        sa.ForeignKeyConstraint(
+            ["bot_id"],
+            ["bots.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["channel_id"],
+            ["channels.id"],
+        ),
         sa.PrimaryKeyConstraint("bot_id", "channel_id"),
     )
     op.create_table(
         "humans_channels",
         sa.Column("human_id", sa.Integer(), nullable=False),
         sa.Column("channel_id", sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(["channel_id"], ["channels.id"],),
-        sa.ForeignKeyConstraint(["human_id"], ["humans.id"],),
+        sa.ForeignKeyConstraint(
+            ["channel_id"],
+            ["channels.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["human_id"],
+            ["humans.id"],
+        ),
         sa.PrimaryKeyConstraint("human_id", "channel_id"),
     )
     # ### end Alembic commands ###

@@ -1,13 +1,18 @@
 import unittest
 from unittest.mock import MagicMock
 
-from base import TestBotHandlersBase
 from telegram import Chat, User
 
 from app.extensions import db
 from app.lib.handlers.left_chat_member import LeftChatMemberFilter
-from app.models import (Bot, BotChannelMember, Channel, Human,
-                        HumanChannelMember)
+from app.models import (
+    Bot,
+    BotChannelMember,
+    Channel,
+    Human,
+    HumanChannelMember,
+)
+from base import TestBotHandlersBase
 
 
 class TestHandler(TestBotHandlersBase):

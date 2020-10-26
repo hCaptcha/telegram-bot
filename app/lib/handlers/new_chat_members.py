@@ -7,8 +7,13 @@ from app.config import get_active_config
 from app.extensions import db
 from app.lib.handlers.base import BaseHandler, app_context
 from app.lib.handlers.chat_created import ChatCreatedFilter
-from app.models import (Bot, BotChannelMember, Channel, Human,
-                        HumanChannelMember)
+from app.models import (
+    Bot,
+    BotChannelMember,
+    Channel,
+    Human,
+    HumanChannelMember,
+)
 
 
 class NewChatMembersFilter(BaseHandler):

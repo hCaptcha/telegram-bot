@@ -1,12 +1,16 @@
 import unittest
 from unittest.mock import MagicMock, call
 
-from base import TestBotHandlersBase
-
 from app.extensions import db
 from app.lib.handlers.stats import StatsCommand
-from app.models import (Bot, BotChannelMember, Channel, Human,
-                        HumanChannelMember)
+from app.models import (
+    Bot,
+    BotChannelMember,
+    Channel,
+    Human,
+    HumanChannelMember,
+)
+from base import TestBotHandlersBase
 
 
 class TestHandler(TestBotHandlersBase):

@@ -1,8 +1,7 @@
 import unittest
 
-from test_helpers import BaseCase
-
 from app.models import Human
+from test_helpers import BaseCase
 
 
 class TestModels(BaseCase):

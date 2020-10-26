@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
 
-from base import TestBotHandlersBase
 from telegram import User
 
 from app.extensions import db
@@ -9,6 +8,7 @@ from app.lib.handlers.new_chat_members import NewChatMembersFilter
 from app.lib.handlers.restrict import RestrcitCommand
 from app.models import Channel
 from app.tests.test_helpers import AttrDict
+from base import TestBotHandlersBase
 
 
 class TestHandler(TestBotHandlersBase):

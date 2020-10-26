@@ -4,8 +4,13 @@ from telegram.ext import CallbackContext
 
 from app.extensions import db
 from app.lib.handlers.base import BaseHandler, app_context
-from app.models import (Bot, BotChannelMember, Channel, Human,
-                        HumanChannelMember)
+from app.models import (
+    Bot,
+    BotChannelMember,
+    Channel,
+    Human,
+    HumanChannelMember,
+)
 
 
 class LocationFilter(BaseHandler):
@@ -24,7 +29,9 @@ class LocationFilter(BaseHandler):
         if context.args:
             channel_name = " ".join(context.args)
 
-        human = Human.query.filter(Human.user_id == str(user_id),).none_or_one()
+        human = Human.query.filter(
+            Human.user_id == str(user_id),
+        ).none_or_one()
         if human is not None:
             # Update location
             geolocator = Nominatim(user_agent="hcaptcha-bot")

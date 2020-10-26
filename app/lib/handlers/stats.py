@@ -3,8 +3,13 @@ from telegram.ext import CallbackContext
 
 from app.extensions import db
 from app.lib.handlers.base import BaseHandler, app_context
-from app.models import (Bot, BotChannelMember, Channel, Human,
-                        HumanChannelMember)
+from app.models import (
+    Bot,
+    BotChannelMember,
+    Channel,
+    Human,
+    HumanChannelMember,
+)
 
 
 class StatsCommand(BaseHandler):
