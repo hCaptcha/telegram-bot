@@ -27,7 +27,6 @@ class StatsCommand(BaseHandler):
             channel = (
                 db.session.query(Channel).filter_by(chat_id=str(chat_id)).one_or_none()
             )
-            print(channel)
             num_bots = (
                 db.session.query(BotChannelMember)
                 .filter_by(channel_id=channel.id)
@@ -46,7 +45,7 @@ class StatsCommand(BaseHandler):
                 percent_humans = num_humans / float(num_all_user) * 100
                 percent_bots = num_bots / float(num_all_user) * 100
             count_per_country = (
-                db.session.query(Human.country_code, func.count(Human.country_code))
+                db.session.query(Human.country_code, func.count(Human.id))
                 .join(HumanChannelMember)
                 .filter(HumanChannelMember.channel_id == channel.id)
                 .group_by(Human.country_code)
@@ -60,7 +59,6 @@ class StatsCommand(BaseHandler):
                 ),
                 count_per_country,
             )
-            print(percent_per_country)
             to_sorted_text = list(
                 map(
                     lambda x: "{}: {:.2f}%".format(x[0], x[1]),
