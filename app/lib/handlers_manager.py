@@ -41,7 +41,7 @@ class HandlersManager(BaseHandler):
             CommandHandler("help", HelpCommand(self.app).handler),
             CommandHandler("restrict", RestrcitCommand(self.app).handler),
             # CommandHandler("stats", StatsCommand(self.app).handler),
-            MessageHandler(Filters.command, UnknownCommand(self.app).handler),
+            MessageHandler(Filters.private & Filters.command, UnknownCommand(self.app).handler),
         ]
 
         for handler in handlers:
