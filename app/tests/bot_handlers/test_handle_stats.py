@@ -23,6 +23,7 @@ class TestHandler(TestBotHandlersBase):
 
         context = MagicMock()
         context.bot = self.bot
+        
         command.can_get_stats = MagicMock(return_value=True)
         command.handler(update_event, context)
 
