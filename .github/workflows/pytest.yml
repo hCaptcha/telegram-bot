@@ -41,7 +41,7 @@ jobs:
     - name: PyTest w/ Coverage
       env:
         TELEGRAM_USERNAME: hCaptchaTestBot
-        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN || "fake"}}
         HCAPTCHA_SECRET: "fake"
         HCAPTCHA_SITE_KEY: "fake"
       run: |
