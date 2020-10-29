@@ -23,7 +23,7 @@ class TestHandler(TestBotHandlersBase):
 
         context = MagicMock()
         context.bot = self.bot
-        
+
         command.can_get_stats = MagicMock(return_value=True)
         command.handler(update_event, context)
 
@@ -58,7 +58,9 @@ class TestHandler(TestBotHandlersBase):
 
         command.handler(update_event, context)
         # can get stats
-        command.reply_stats.assert_called_with(update_event.message, 50.0, 2, 50.0, 2, ["unknown: 50.00%", "us: 50.00%"])
+        command.reply_stats.assert_called_with(
+            update_event.message, 50.0, 2, 50.0, 2, ["unknown: 50.00%", "us: 50.00%"]
+        )
 
         # can't get stats
         command.can_get_stats = MagicMock(return_value=False)
