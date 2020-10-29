@@ -3,7 +3,12 @@
 
 name: pytest and lint
 
-on: [push, pull_request]
+on:
+  push:
+    branches: '**'
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [master, staging]
 
 jobs:
   test:
@@ -41,7 +46,7 @@ jobs:
     - name: PyTest w/ Coverage
       env:
         TELEGRAM_USERNAME: hCaptchaTestBot
-        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN || "fake"}}
         HCAPTCHA_SECRET: "fake"
         HCAPTCHA_SITE_KEY: "fake"
       run: |
