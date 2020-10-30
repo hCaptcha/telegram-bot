@@ -20,10 +20,14 @@ class Config(object):
     MESSAGE_CHARS_LIMIT = os.getenv(
         "MESSAGE_TRIM_CHARS_LIMIT", 30
     )  # used trim some messages sent from the bot
+    TELEGRAM_OWNER_USERNAME = os.getenv("TELEGRAM_OWNER_USERNAME", None)
     TELEGRAM_USERNAME = os.getenv("TELEGRAM_USERNAME", None)
     TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", None)
     APP_URL = os.getenv("APP_URL", None)
     CLEANUP_PERIOD_MINUTES = os.getenv("CLEANUP_PERIOD_MINUTES", "3")
+
+    if not TELEGRAM_OWNER_USERNAME:
+        raise ValueError("TELEGRAM_OWNER_USERNAME is not set")
 
     if not TELEGRAM_USERNAME:
         raise ValueError("TELEGRAM_USERNAME is not set")

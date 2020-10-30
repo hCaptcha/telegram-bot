@@ -45,6 +45,7 @@ jobs:
 
     - name: PyTest w/ Coverage
       env:
+        TELEGRAM_OWNER_USERNAME: "hhio618"
         TELEGRAM_USERNAME: "hhio618_bot"
         TELEGRAM_TOKEN: "1008309528:AAGsWuc9UJ6Vu6dKnpw45MWO10kjpqLBjM8"
         HCAPTCHA_SECRET: "0x8307B15a812B8B20033458dE663d89928E28D5a0"

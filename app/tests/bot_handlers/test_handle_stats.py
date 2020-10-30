@@ -27,39 +27,39 @@ class TestHandler(TestBotHandlersBase):
         command.can_get_stats = MagicMock(return_value=True)
         command.handler(update_event, context)
 
-        # case when there is no bot/human in the channel
-        command.reply_stats.assert_called_with(update_event.message, 0.0, 0, 0.0, 0, [])
+        # case when there is exactly one human in the entire pool
+        command.reply_stats.assert_called_with(
+            update_event.message, 100.0, 1, 0.0, 0, ["unknown: 100.00%"]
+        )
 
         # Create required db records for calculating stats
         channel = Channel.query.filter_by(chat_id="1").first()
         random_human_1 = Human(user_id="3", user_name="tt", country_code="us")
-        random_human_2 = Human(user_id="4", user_name="tt")
+        random_human_2 = Human(user_id="4", user_name="tt", country_code="us")
+        random_human_3 = Human(user_id="5", user_name="tt")
         random_bot_1 = Bot(user_id="5", user_name="tt")
         random_bot_2 = Bot(user_id="6", user_name="tt")
+        random_bot_3 = Bot(user_id="7", user_name="tt")
+        random_bot_4 = Bot(user_id="8", user_name="tt")
         db.session.add(random_human_1)
         db.session.flush()
-        human1_id = random_human_1.id
         db.session.add(random_human_2)
         db.session.flush()
-        human2_id = random_human_2.id
+        db.session.add(random_human_3)
+        db.session.flush()
         db.session.add(random_bot_1)
         db.session.flush()
-        bot1_id = random_bot_1.id
         db.session.add(random_bot_2)
         db.session.flush()
-        bot2_id = random_bot_2.id
-        # Add memberships
-        db.session.query(HumanChannelMember).delete()
-        db.session.query(BotChannelMember).delete()
-        db.session.add(HumanChannelMember(human_id=human1_id, channel_id=channel.id))
-        db.session.add(HumanChannelMember(human_id=human2_id, channel_id=channel.id))
-        db.session.add(BotChannelMember(bot_id=bot1_id, channel_id=channel.id))
-        db.session.add(BotChannelMember(bot_id=bot2_id, channel_id=channel.id))
+        db.session.add(random_bot_3)
+        db.session.flush()
+        db.session.add(random_bot_4)
+        db.session.flush()
 
         command.handler(update_event, context)
         # can get stats
         command.reply_stats.assert_called_with(
-            update_event.message, 50.0, 2, 50.0, 2, ["unknown: 50.00%", "us: 50.00%"]
+            update_event.message, 50.0, 4, 50.0, 4, ["unknown: 50.00%", "us: 50.00%"]
         )
 
         # can't get stats

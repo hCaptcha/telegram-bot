@@ -11,7 +11,7 @@ Available commands:
 
 /hi - check your status or verify yourself
 /restrict <super_group> - restrict newly joined users in <super_group>. bot should have admin permissions.
-/stats - show statistics about humans/bots in channels
+/stats - show statistics about humans/bots from the entire pool
 """
 
         context.bot.send_message(
