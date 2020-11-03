@@ -88,10 +88,7 @@ class StatsCommand(BaseHandler):
         """
         # check if we are chatting directly with this bot
         if user_id == chat_id:
-            owner = get_active_config().TELEGRAM_OWNER_USERNAME
-            # Only allow owner for now
-            if owner is not None and owner == username:
-                return True
+            return True
         return False
 
     def reply_stats(
