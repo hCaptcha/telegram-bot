@@ -45,7 +45,7 @@ class RestrcitCommand(BaseHandler):
                     f"{channel_name} must be a supergroup and the bot must be have admin permissions"
                 )
 
-        except (IndexError, ValueError):
+        except (IndexError, ValueError, Exception):
             update.message.reply_text("Usage: /restrict <channel>")
 
     def is_admin_on_channel(self, bot, chat_id, user_id):
