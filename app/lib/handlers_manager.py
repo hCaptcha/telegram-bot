@@ -5,6 +5,7 @@ from app.lib.handlers.base import BaseHandler
 from app.lib.handlers.chat_created import ChatCreatedFilter
 from app.lib.handlers.help import HelpCommand
 from app.lib.handlers.left_chat_member import LeftChatMemberFilter
+from app.lib.handlers.location import LocationFilter
 from app.lib.handlers.migrate import MigrateFilter
 from app.lib.handlers.new_chat_members import NewChatMembersFilter
 from app.lib.handlers.restrict import RestrcitCommand
@@ -36,11 +37,14 @@ class HandlersManager(BaseHandler):
                 Filters.status_update.left_chat_member,
                 LeftChatMemberFilter(self.app).handler,
             ),
+            MessageHandler(
+                Filters.location, LocationFilter(self.app).handler, pass_user_data=True
+            ),
             CommandHandler("start", StartCommand(self.app).handler, pass_args=True),
             CommandHandler("hi", StartCommand(self.app).handler, pass_args=True),
             CommandHandler("help", HelpCommand(self.app).handler),
             CommandHandler("restrict", RestrcitCommand(self.app).handler),
-            # CommandHandler("stats", StatsCommand(self.app).handler),
+            CommandHandler("stats", StatsCommand(self.app).handler),
             MessageHandler(Filters.private & Filters.command, UnknownCommand(self.app).handler),
         ]
 
