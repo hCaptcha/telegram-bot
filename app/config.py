@@ -1,10 +1,15 @@
 import os
+import sys
 
 from dotenv import load_dotenv
 from flask import current_app
 
 load_dotenv()
 
+
+app_settings = os.getenv("APP_SETTINGS", "development")
+if "pytest" in sys.modules:
+    app_settings = "testing"
 
 class Config(object):
     DEBUG = False
@@ -24,18 +29,18 @@ class Config(object):
     TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", None)
     APP_URL = os.getenv("APP_URL", None)
     CLEANUP_PERIOD_MINUTES = os.getenv("CLEANUP_PERIOD_MINUTES", "3")
+    if app_settings != "testing":
+        if not TELEGRAM_USERNAME:
+            raise ValueError("TELEGRAM_USERNAME is not set")
 
-    if not TELEGRAM_USERNAME:
-        raise ValueError("TELEGRAM_USERNAME is not set")
+        if not TELEGRAM_TOKEN:
+            raise ValueError("TELEGRAM_TOKEN is not set")
 
-    if not TELEGRAM_TOKEN:
-        raise ValueError("TELEGRAM_TOKEN is not set")
+        if not HCAPTCHA_SECRET:
+            raise ValueError("HCAPTCHA_SECRET is not set")
 
-    if not HCAPTCHA_SECRET:
-        raise ValueError("HCAPTCHA_SECRET is not set")
-
-    if not HCAPTCHA_SITE_KEY:
-        raise ValueError("HCAPTCHA_SITE_KEY is not set")
+        if not HCAPTCHA_SITE_KEY:
+            raise ValueError("HCAPTCHA_SITE_KEY is not set")
 
 
 class ProductionConfig(Config):
@@ -57,8 +62,10 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     DEBUG = True
     TESTING = True
+    APP_URL = os.getenv("APP_URL", "http://127.0.0.1:8000/")
     SQLALCHEMY_DATABASE_URI = "sqlite://"
-
+    TELEGRAM_USERNAME = "test"
+    TELEGRAM_TOKEN = "123:dummy"
 
 app_config = {
     "development": DevelopmentConfig,
@@ -75,7 +82,7 @@ def active_config_name():
         config_name = current_app.config_name
 
     if not config_name:
-        config_name = os.getenv("APP_SETTINGS", "development")
+        config_name = app_settings
 
     return config_name
 

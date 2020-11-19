@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, call, patch
 
 from telegram import ChatPermissions, User
 
+from app.tests.test_helpers import AttrDict
 from app.extensions import db
 from app.lib.handlers.new_chat_members import NewChatMembersFilter
 from app.models import (
@@ -18,6 +19,9 @@ from base import TestBotHandlersBase
 class TestHandler(TestBotHandlersBase):
     def test(self):
         command = NewChatMembersFilter()
+        self.bot.bot = MagicMock(return_value=AttrDict({"id": 123}))
+        self.bot.get_my_commands = MagicMock(return_value=None)
+        self.bot.get_me = MagicMock(return_value={"is_bot": True, "username": "test"})
         self.bot.restrict_chat_member = MagicMock(return_value=None)
         command.send_bot_link = MagicMock(
             return_value={"message_id": "123", "chat": {"id": "123"}}

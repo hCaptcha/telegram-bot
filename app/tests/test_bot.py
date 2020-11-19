@@ -11,6 +11,7 @@ class TestBot(BaseCase):
         super().setUp()
         self.hCaptchaBot = HCaptchaBot(app_config["testing"].TELEGRAM_TOKEN)
         self.bot = self.hCaptchaBot.bot
+        self.bot.get_me = MagicMock(return_value={"is_bot": True, "username": "test"})
 
     def test_is_bot(self):
         self.assertTrue(self.bot.get_me()["is_bot"])

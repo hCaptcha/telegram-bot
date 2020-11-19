@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, call
 
 from telegram import Chat, User
 
+from app.tests.test_helpers import AttrDict
 from app.extensions import db
 from app.lib.handlers.restrict import RestrcitCommand
 from app.models import Channel
@@ -18,6 +19,9 @@ class TestHandler(TestBotHandlersBase):
         reply_text = update_event.message.reply_text = MagicMock(return_value=None)
         channel = Channel.query.filter_by(chat_id="1").first()
         context = MagicMock()
+        self.bot.bot = MagicMock(return_value=AttrDict({"id": 123}))
+        self.bot.get_my_commands = MagicMock(return_value=None)
+        self.bot.get_me = MagicMock(return_value={"is_bot": True, "username": "test"})
         context.bot = self.bot
         context.args = []
 

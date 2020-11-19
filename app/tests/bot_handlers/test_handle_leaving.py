@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 from telegram import Chat, User
 
+from app.tests.test_helpers import AttrDict
 from app.extensions import db
 from app.lib.handlers.left_chat_member import LeftChatMemberFilter
 from app.models import (
@@ -50,6 +51,9 @@ class TestHandler(TestBotHandlersBase):
         db.session.add(BotChannelMember(bot_id=bot1_id, channel_id=channel.id))
         db.session.add(BotChannelMember(bot_id=bot2_id, channel_id=channel.id))
 
+        self.bot.bot = MagicMock(return_value=AttrDict({"id": 123}))
+        self.bot.get_my_commands = MagicMock(return_value=None)
+        self.bot.get_me = MagicMock(return_value={"is_bot": True, "username": "test"})
         bot_user = self.bot
 
         self.bot.get_updates = MagicMock(
