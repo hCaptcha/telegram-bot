@@ -3,7 +3,6 @@ from unittest.mock import MagicMock, call, patch
 
 from telegram import ChatPermissions, User
 
-from app.tests.test_helpers import AttrDict
 from app.extensions import db
 from app.lib.handlers.new_chat_members import NewChatMembersFilter
 from app.models import (
@@ -13,6 +12,7 @@ from app.models import (
     Human,
     HumanChannelMember,
 )
+from app.tests.test_helpers import AttrDict
 from base import TestBotHandlersBase
 
 

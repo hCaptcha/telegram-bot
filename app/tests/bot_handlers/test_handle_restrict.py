@@ -3,7 +3,6 @@ from unittest.mock import MagicMock, call
 
 from telegram import Chat, User
 
-from app.tests.test_helpers import AttrDict
 from app.extensions import db
 from app.lib.handlers.restrict import RestrcitCommand
 from app.models import Channel

@@ -3,7 +3,6 @@ from unittest.mock import MagicMock
 
 from telegram import Chat, User
 
-from app.tests.test_helpers import AttrDict
 from app.extensions import db
 from app.lib.handlers.left_chat_member import LeftChatMemberFilter
 from app.models import (
@@ -13,6 +12,7 @@ from app.models import (
     Human,
     HumanChannelMember,
 )
+from app.tests.test_helpers import AttrDict
 from base import TestBotHandlersBase
 
 

@@ -11,6 +11,7 @@ app_settings = os.getenv("APP_SETTINGS", "development")
 if "pytest" in sys.modules:
     app_settings = "testing"
 
+
 class Config(object):
     DEBUG = False
     TESTING = False
@@ -66,6 +67,7 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite://"
     TELEGRAM_USERNAME = "test"
     TELEGRAM_TOKEN = "123:dummy"
+
 
 app_config = {
     "development": DevelopmentConfig,
