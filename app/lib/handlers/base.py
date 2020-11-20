@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from functools import wraps
 
 from telegram import ChatPermissions, ParseMode, Update
 from telegram.ext import CallbackContext
@@ -8,7 +9,6 @@ from app.extensions import db
 from app.lib.cleanup_worker import CleanupWorker
 from app.models import Human, Message
 
-logger = logging.getLogger("bot")
 
 
 def app_context(func):
@@ -22,11 +22,12 @@ def app_context(func):
     return func_wrapper
 
 
+exception_logger = logging.getLogger("bot.exceptions")
 # Adapted from https://github.com/python-telegram-bot/python-telegram-bot/issues/855#issuecomment-333647522
 def catch_error(f):
     @wraps(f)
     def wrap(self, update, context, *args):
-        logger.info(
+        exception_logger.info(
             "User {user} sent {message}".format(
                 user=update.message.from_user.username, message=update.message.text
             )
@@ -35,7 +36,7 @@ def catch_error(f):
             return f(self, update, context, *args)
         except Exception as e:
             # Also we can send this error to sentry.io
-            logger.error(str(e))
+            exception_logger.error(str(e))
             context.bot.send_message(
                 chat_id=update.message.chat_id,
                 text="We encountered an error processing this request!",
