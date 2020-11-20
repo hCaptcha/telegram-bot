@@ -2,12 +2,13 @@ from telegram import Update
 from telegram.ext import CallbackContext
 
 from app.extensions import db
-from app.lib.handlers.base import BaseHandler, app_context
+from app.lib.handlers.base import BaseHandler, app_context, catch_error
 from app.models import Channel
 
 
 class MigrateFilter(BaseHandler):
     @app_context
+    @catch_error
     def handler(self, update: Update, context: CallbackContext):
         message = update.message
 

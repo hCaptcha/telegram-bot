@@ -9,6 +9,7 @@ from app.lib.handlers.base import BaseHandler, app_context
 
 class StartCommand(BaseHandler):
     @app_context
+    @catch_error
     def handler(self, update: Update, context: CallbackContext):
         self.logger.info(f"called handle_start with arguments: {context.args}")
 

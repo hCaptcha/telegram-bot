@@ -4,7 +4,7 @@ from telegram.ext import CallbackContext
 
 from app.config import get_active_config
 from app.extensions import db
-from app.lib.handlers.base import BaseHandler, app_context
+from app.lib.handlers.base import BaseHandler, app_context, catch_error
 from app.models import (
     Bot,
     BotChannelMember,
@@ -16,6 +16,7 @@ from app.models import (
 
 class StatsCommand(BaseHandler):
     @app_context
+    @catch_error
     def handler(self, update: Update, context: CallbackContext):
         chat_id = update.message.chat_id
 

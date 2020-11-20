@@ -5,7 +5,7 @@ from telegram.ext import CallbackContext
 
 from app.config import get_active_config
 from app.extensions import db
-from app.lib.handlers.base import BaseHandler, app_context
+from app.lib.handlers.base import BaseHandler, app_context, catch_error
 from app.lib.handlers.chat_created import ChatCreatedFilter
 from app.models import (
     Bot,
@@ -18,6 +18,7 @@ from app.models import (
 
 class NewChatMembersFilter(BaseHandler):
     @app_context
+    @catch_error
     def handler(self, update: Update, context: CallbackContext):
         """
         Iterate over newly joined chat users and for each user: restrict them and send the hcaptcha link
