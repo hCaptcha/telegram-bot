@@ -18,6 +18,9 @@ class TestHandler(TestBotHandlersBase):
         self.app.bot_instance = hcaptcha_bot
         self.bot = hcaptcha_bot.bot
         self.worker = hcaptcha_bot.worker
+        self.bot.bot = MagicMock(return_value=AttrDict({"id": 123}))
+        self.bot.get_my_commands = MagicMock(return_value=None)
+        self.bot.get_me = MagicMock(return_value={"is_bot": True, "username": "test"})
 
     def test_is_verified(self):
         h = Human.query.filter_by(user_id="1", user_name="joe").one_or_none()
